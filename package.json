@@ -2,16 +2,17 @@
   "name": "astroport-dca-bot",
   "version": "1.0.0",
   "description": "",
-  "main": "index.ts",
+  "main": "src/index.ts",
   "scripts": {
     "build": "tsc --build",
     "start": "node ./dist",
-    "serve": "ts-node ./",
+    "serve": "NODE_NO_WARNINGS=1 ts-node ./",
     "lint": "tsc --noEmit && eslint \"**/*.ts\" --quiet --fix",
     "test": "jest"
   },
   "author": "jan fabian",
   "license": "ISC",
+  "type": "module",
   "devDependencies": {
     "@types/jest": "28.1.8",
     "@types/node": "18.7.13",
@@ -31,5 +32,9 @@
     "singleQuote": true,
     "tabWidth": 2,
     "trailingComma": "all"
+  },
+  "dependencies": {
+    "@terra-money/terra.js": "3.1.6",
+    "dotenv": "16.0.1"
   }
 }
