@@ -1,8 +1,6 @@
 import 'dotenv/config'
-import { getLCDClient } from './terra.js'
+import { getPairs } from './astroport.js'
 
-const lcd = await getLCDClient()
+const pairs = await getPairs()
 
-const factory = process.env.ASTROPORT_FACTORY as string
-
-console.log(await lcd.wasm.contractQuery(factory, { config: {} }))
+console.log(pairs)
