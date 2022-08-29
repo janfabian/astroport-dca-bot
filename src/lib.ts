@@ -1,7 +1,16 @@
+import { DEFAULT_WHITELISTED_TOKENS } from './astroport.js'
 import { Pair } from './types/astroport.js'
 
 export type Graph = Map<string, Set<string>>
 export type Path = string[]
+
+export function getNativeTokens(pairs: Pair[]) {
+  return new Set(
+    pairs
+      .flatMap((p) => p.asset_infos.map((a) => a.native_token?.denom))
+      .filter(Boolean) as string[],
+  )
+}
 
 export function createGraph(pairs: Pair[]) {
   const graph: Graph = new Map()
@@ -39,6 +48,9 @@ export function* findPaths(
   whitelisted: Set<string>,
 ) {
   whitelisted.add(from)
+  for (const t of DEFAULT_WHITELISTED_TOKENS) {
+    whitelisted.add(t)
+  }
 
   const start = graph.get(from)
 

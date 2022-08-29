@@ -9,6 +9,9 @@ export enum TOKEN_TYPE {
   NATIVE = 'NATIVE',
 }
 
+export const DEFAULT_WHITELISTED_TOKENS =
+  process.env.DEFAULT_WHITELISTED_TOKENS?.split(',') || []
+
 export async function* paginated(query, resultKey) {
   let startAfter
   let hasNextPage = true

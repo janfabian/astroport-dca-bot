@@ -1,22 +1,68 @@
-import { createGraph, findPaths, Graph } from './lib.js'
+import { createGraph, findPaths, getNativeTokens, Graph } from './lib.js'
+
+function nativeToken(denom: string) {
+  return {
+    native_token: {
+      denom,
+    },
+  }
+}
+
+function token(contractAddr: string) {
+  return {
+    token: {
+      contract_addr: contractAddr,
+    },
+  }
+}
+
+describe('getNativeTokens', () => {
+  it('returns empty', () => {
+    const pairs = []
+
+    const nativeTokens = getNativeTokens(pairs)
+
+    expect(nativeTokens).toEqual(new Set())
+  })
+
+  it('returns single mixed pair native tokens', () => {
+    const pairs = [
+      {
+        asset_infos: [nativeToken('uluna'), token('addr')],
+        contract_addr: 'contract_addr',
+        liquidity_token: 'liquidity_token',
+        pair_type: {},
+      },
+    ]
+
+    const nativeTokens = getNativeTokens(pairs)
+
+    expect(nativeTokens).toEqual(new Set(['uluna']))
+  })
+
+  it('returns multiple pairs native tokens', () => {
+    const pairs = [
+      {
+        asset_infos: [nativeToken('uluna'), token('addr')],
+        contract_addr: 'contract_addr',
+        liquidity_token: 'liquidity_token',
+        pair_type: {},
+      },
+      {
+        asset_infos: [nativeToken('uluna'), nativeToken('uluna2')],
+        contract_addr: 'contract_addr',
+        liquidity_token: 'liquidity_token',
+        pair_type: {},
+      },
+    ]
+
+    const nativeTokens = getNativeTokens(pairs)
+
+    expect(nativeTokens).toEqual(new Set(['uluna', 'uluna2']))
+  })
+})
 
 describe('createGraph', () => {
-  function nativeToken(denom: string) {
-    return {
-      native_token: {
-        denom,
-      },
-    }
-  }
-
-  function token(contractAddr: string) {
-    return {
-      token: {
-        contract_addr: contractAddr,
-      },
-    }
-  }
-
   it('creates empty graph', () => {
     const pairs = []
 
