@@ -1,6 +1,7 @@
 import 'dotenv/config'
+
 import { getPairs } from './astroport.js'
+import { createGraph } from './lib.js'
 
 const pairs = await getPairs()
-
-console.log(pairs)
+const graph = createGraph(pairs)

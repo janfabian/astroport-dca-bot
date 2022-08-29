@@ -14,7 +14,13 @@ export async function getPricesCoins() {
   return gasPricesCoins
 }
 
+let lcdSingleton: LCDClient
+
 export async function getLCDClient() {
+  if (lcdSingleton) {
+    return lcdSingleton
+  }
+
   const gasPricesCoins = await getPricesCoins()
 
   const lcd = new LCDClient({
@@ -25,6 +31,8 @@ export async function getLCDClient() {
     //@ts-ignore
     gas: 10000000,
   })
+
+  lcdSingleton = lcd
 
   return lcd
 }

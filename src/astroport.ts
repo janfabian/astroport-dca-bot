@@ -1,6 +1,13 @@
 import { getLCDClient } from './terra.js'
+import { Pair } from './types/astroport.js'
 
 export const FACTORY = process.env.ASTROPORT_FACTORY as string
+export const ROUTER = process.env.ASTROPORT_ROUTER as string
+
+export enum TOKEN_TYPE {
+  TOKEN = 'TOKEN',
+  NATIVE = 'NATIVE',
+}
 
 export async function* paginated(query, resultKey) {
   let startAfter
@@ -25,10 +32,10 @@ export async function getConfig() {
   return await lcd.wasm.contractQuery(FACTORY, { config: {} })
 }
 
-export async function getPairs() {
+export async function getPairs(): Promise<Pair[]> {
   const lcd = await getLCDClient()
 
-  let pairs = []
+  let pairs: Pair[] = []
 
   for await (const items of paginated((startAfter) => {
     return lcd.wasm.contractQuery(FACTORY, {
@@ -39,4 +46,10 @@ export async function getPairs() {
   }
 
   return pairs
+}
+
+export async function simulateSwap() {
+  const lcd = await getLCDClient()
+
+  return await lcd.wasm.contractQuery(ROUTER, { config: {} })
 }
