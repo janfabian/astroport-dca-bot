@@ -1,20 +1,5 @@
+import { nativeToken, token } from './astroport.js'
 import { createGraph, findPaths, getNativeTokens, Graph } from './lib.js'
-
-function nativeToken(denom: string) {
-  return {
-    native_token: {
-      denom,
-    },
-  }
-}
-
-function token(contractAddr: string) {
-  return {
-    token: {
-      contract_addr: contractAddr,
-    },
-  }
-}
 
 describe('getNativeTokens', () => {
   it('returns empty', () => {

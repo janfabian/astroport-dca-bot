@@ -25,3 +25,8 @@ export interface PairType {
 
 export interface Xyk {}
 export interface Stable {}
+
+export interface Asset {
+  info: AssetInfo
+  amount: string
+}

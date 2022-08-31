@@ -1,4 +1,4 @@
-import { Coins, LCDClient } from '@terra-money/terra.js'
+import { Coins, LCDClient, MnemonicKey } from '@terra-money/terra.js'
 
 declare let fetch: any
 
@@ -28,11 +28,26 @@ export async function getLCDClient() {
     chainID: 'pisco-1', // Use "phoenix-1" for production or "localterra".
     gasPrices: gasPricesCoins,
     gasAdjustment: '1.5',
-    //@ts-ignore
-    gas: 10000000,
   })
 
   lcdSingleton = lcd
 
   return lcd
+}
+
+export function getKey() {
+  return new MnemonicKey({
+    mnemonic: process.env.MNEMONIC,
+    coinType: 330,
+    account: 0,
+    index: 0,
+  })
+}
+
+export async function getWallet() {
+  const key = getKey()
+  const terra = await getLCDClient()
+  const wallet = terra.wallet(key)
+
+  return wallet
 }

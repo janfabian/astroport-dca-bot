@@ -1,5 +1,5 @@
 import { DEFAULT_WHITELISTED_TOKENS } from './astroport.js'
-import { Pair } from './types/astroport.js'
+import { AssetInfo, Pair } from './types/astroport.js'
 
 export type Graph = Map<string, Set<string>>
 export type Path = string[]
@@ -10,6 +10,10 @@ export function getNativeTokens(pairs: Pair[]) {
       .flatMap((p) => p.asset_infos.map((a) => a.native_token?.denom))
       .filter(Boolean) as string[],
   )
+}
+
+export function isNativeToken(assetInfo: AssetInfo) {
+  return Boolean(assetInfo.native_token?.denom)
 }
 
 export function createGraph(pairs: Pair[]) {

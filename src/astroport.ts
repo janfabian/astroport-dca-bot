@@ -51,8 +51,50 @@ export async function getPairs(): Promise<Pair[]> {
   return pairs
 }
 
-export async function simulateSwap() {
+export function nativeToken(denom: string) {
+  return {
+    native_token: {
+      denom: denom,
+    },
+  }
+}
+
+export function token(contractAddr: string) {
+  return {
+    token: {
+      contract_addr: contractAddr,
+    },
+  }
+}
+
+export async function simulateSwap(
+  amount: string,
+  path: string[],
+  nativeTokens: Set<string>,
+) {
   const lcd = await getLCDClient()
 
-  return await lcd.wasm.contractQuery(ROUTER, { config: {} })
+  const ops = path
+    .map((_node, ix) => path.slice(ix, ix + 2))
+    .slice(0, -1)
+    .map((hop) => {
+      const offer = hop[0]
+      const ask = hop[1]
+
+      return {
+        astro_swap: {
+          offer_asset_info: nativeTokens.has(offer)
+            ? nativeToken(offer)
+            : token(offer),
+          ask_asset_info: nativeTokens.has(ask) ? nativeToken(ask) : token(ask),
+        },
+      }
+    })
+
+  return await lcd.wasm.contractQuery(ROUTER, {
+    simulate_swap_operations: {
+      offer_amount: amount,
+      operations: ops,
+    },
+  })
 }

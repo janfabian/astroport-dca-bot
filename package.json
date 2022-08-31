@@ -6,9 +6,9 @@
   "scripts": {
     "build": "tsc --build",
     "start": "node ./dist",
-    "serve": "NODE_NO_WARNINGS=1 ts-node ./",
+    "serve": "NODE_OPTIONS=--openssl-legacy-provider NODE_NO_WARNINGS=1 ts-node ./",
     "lint": "tsc --noEmit && eslint \"**/*.ts\" --quiet --fix",
-    "test": "jest"
+    "test": "NODE_OPTIONS=--openssl-legacy-provider jest"
   },
   "author": "jan fabian",
   "license": "ISC",
@@ -16,6 +16,7 @@
   "devDependencies": {
     "@types/jest": "28.1.8",
     "@types/node": "18.7.13",
+    "@types/ramda": "0.28.15",
     "@typescript-eslint/eslint-plugin": "5.35.1",
     "@typescript-eslint/parser": "5.35.1",
     "eslint": "8.23.0",
@@ -35,6 +36,7 @@
   },
   "dependencies": {
     "@terra-money/terra.js": "3.1.6",
-    "dotenv": "16.0.1"
+    "dotenv": "16.0.1",
+    "ramda": "0.28.0"
   }
 }
