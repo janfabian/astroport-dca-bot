@@ -4,6 +4,7 @@ import { inspect } from 'util'
 
 import { getPairs, simulateSwap } from './astroport.js'
 import addBotTip from './executes/add-bot-tip.js'
+import createDcaOrder from './executes/create-dca-order.js'
 import { createGraph, findPaths, getNativeTokens } from './lib.js'
 import getConfig from './queries/get-config.js'
 import getUserConfig from './queries/get-user-config.js'
@@ -58,6 +59,34 @@ console.log(result)
 //     amount: '1',
 //   },
 // ])
+
+// const executeTx = await wallet.createAndSignTx({
+//   msgs: msgs,
+// })
+
+// const executeTxResult = await terra.tx.broadcast(executeTx)
+
+// console.log(executeTxResult)
+
+// const msgs = createDcaOrder(
+//   wallet,
+//   {
+//     info: {
+//       native_token: {
+//         denom: 'uluna',
+//       },
+//     },
+//     amount: '100',
+//   },
+//   {
+//     token: {
+//       contract_addr:
+//         'terra167dsqkh2alurx997wmycw9ydkyu54gyswe3ygmrs4lwume3vmwks8ruqnv',
+//     },
+//   },
+//   10,
+//   '10',
+// )
 
 // const executeTx = await wallet.createAndSignTx({
 //   msgs: msgs,
