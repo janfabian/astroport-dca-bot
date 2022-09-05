@@ -30,3 +30,11 @@ export interface Asset {
   info: AssetInfo
   amount: string
 }
+
+export interface Order {
+  initial_asset: Asset
+  target_asset: AssetInfo
+  interval: number
+  dca_amount: string
+  first_purchase?: number
+}
