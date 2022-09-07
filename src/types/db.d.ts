@@ -1,4 +1,4 @@
 export type User = {
-  pkey: string
+  address: string
   orderIds?: number[]
 }

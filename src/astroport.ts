@@ -12,7 +12,7 @@ export enum TOKEN_TYPE {
 export const DEFAULT_WHITELISTED_TOKENS =
   process.env.DEFAULT_WHITELISTED_TOKENS?.split(',') || []
 
-export async function* paginated(query, resultKey) {
+export async function* paginated(query, resultKey: string) {
   let startAfter
   let hasNextPage = true
 

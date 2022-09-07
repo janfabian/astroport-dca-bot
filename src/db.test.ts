@@ -32,7 +32,7 @@ describe('db', () => {
   describe('write', () => {
     it('nonexisting db', () => {
       const file = '__write_nonexisting.json'
-      const user = { pkey: 'pkey' }
+      const user = { address: 'pkey' }
       write(user, file)
 
       const result = list(file)
@@ -44,7 +44,7 @@ describe('db', () => {
     it('empty db', () => {
       const file = '__write_testemptydb.json'
       writeFileSync(file, '')
-      const user = { pkey: 'pkey' }
+      const user = { address: 'pkey' }
       write(user, file)
 
       const result = list(file)
@@ -54,11 +54,11 @@ describe('db', () => {
     })
 
     it('db new item', () => {
-      const data = [{ pkey: 'pkey1' }]
+      const data = [{ address: 'pkey1' }]
       const file = '__write_testdb_new.json'
       writeFileSync(file, JSON.stringify(data))
 
-      const user = { pkey: 'pkey2' }
+      const user = { address: 'pkey2' }
       write(user, file)
       const result = list(file)
 
@@ -68,11 +68,11 @@ describe('db', () => {
     })
 
     it('db update item', () => {
-      const data = [{ pkey: 'pkey1' }]
+      const data = [{ address: 'pkey1' }]
       const file = '__write_testdb_update.json'
       writeFileSync(file, JSON.stringify(data))
 
-      const user = { pkey: 'pkey1', orderIds: [1] }
+      const user = { address: 'pkey1', orderIds: [1] }
       write(user, file)
       const result = list(file)
 
