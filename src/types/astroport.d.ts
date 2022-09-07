@@ -38,3 +38,10 @@ export type Order = {
   dca_amount: string
   first_purchase?: number
 }
+
+export type DcaQueryInfo = {
+  token_allowance: string
+  order: Order & {
+    id: number
+  }
+}

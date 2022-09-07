@@ -95,3 +95,20 @@ export function* findPaths(
     }
   }
 }
+
+export function tryCatch(fn) {
+  return async function (...args) {
+    try {
+      await fn(...args)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      if (e.response?.data) {
+        console.error(e.response?.data)
+      } else {
+        console.error(e)
+      }
+
+      throw e
+    }
+  }
+}
