@@ -15,12 +15,17 @@ const k = getKey()
 const terra = await getLCDClient()
 const wallet = terra.wallet(k)
 
-const result = await terra.wasm.contractQuery(
+const result2 = await terra.wasm.contractQuery(
   process.env.ASTROPORT_DCA as string,
-  getUserDcaOrders(wallet.key.accAddress),
+  getUserConfig(wallet.key.accAddress),
 )
 
-console.log(result)
+const result = await terra.wasm.contractQuery(
+  process.env.ASTROPORT_DCA as string,
+  getConfig(),
+)
+
+console.log(inspect(result2, false, null))
 
 // const send = new MsgSend(
 //   k.publicKey?.address() as string,
