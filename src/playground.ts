@@ -1,4 +1,4 @@
-import { MsgExecuteContract, MsgSend } from '@terra-money/terra.js'
+import { Coin, MsgExecuteContract, MsgSend } from '@terra-money/terra.js'
 import 'dotenv/config'
 import { inspect } from 'util'
 
@@ -14,6 +14,8 @@ import { getKey, getLCDClient } from './terra.js'
 const k = getKey()
 const terra = await getLCDClient()
 const wallet = terra.wallet(k)
+
+console.log(new Coin('foo', '10000'))
 
 // const result2 = await terra.wasm.contractQuery(
 //   process.env.ASTROPORT_DCA as string,
