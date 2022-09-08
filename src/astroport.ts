@@ -1,5 +1,5 @@
 import { getLCDClient } from './terra.js'
-import { Pair } from './types/astroport.js'
+import { Pair, SwapOperation } from './types/astroport.js'
 
 export const FACTORY = process.env.ASTROPORT_FACTORY as string
 export const ROUTER = process.env.ASTROPORT_ROUTER as string
@@ -67,13 +67,10 @@ export function token(contractAddr: string) {
   }
 }
 
-export async function simulateSwap(
-  amount: string,
+export function swapOpsFromPath(
   path: string[],
   nativeTokens: Set<string>,
-) {
-  const lcd = await getLCDClient()
-
+): SwapOperation[] {
   const ops = path
     .map((_node, ix) => path.slice(ix, ix + 2))
     .slice(0, -1)
@@ -90,6 +87,18 @@ export async function simulateSwap(
         },
       }
     })
+
+  return ops
+}
+
+export async function simulateSwap(
+  amount: string,
+  path: string[],
+  nativeTokens: Set<string>,
+) {
+  const lcd = await getLCDClient()
+
+  const ops = swapOpsFromPath(path, nativeTokens)
 
   return await lcd.wasm.contractQuery(ROUTER, {
     simulate_swap_operations: {

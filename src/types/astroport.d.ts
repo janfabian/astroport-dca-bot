@@ -45,3 +45,10 @@ export type DcaQueryInfo = {
     id: number
   }
 }
+
+export type SwapOperation = {
+  astro_swap: {
+    offer_asset_info: AssetInfo
+    ask_asset_info: AssetInfo
+  }
+}

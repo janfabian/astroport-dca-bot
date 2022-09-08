@@ -15,17 +15,17 @@ const k = getKey()
 const terra = await getLCDClient()
 const wallet = terra.wallet(k)
 
-const result2 = await terra.wasm.contractQuery(
-  process.env.ASTROPORT_DCA as string,
-  getUserConfig(wallet.key.accAddress),
-)
+// const result2 = await terra.wasm.contractQuery(
+//   process.env.ASTROPORT_DCA as string,
+//   getUserConfig(wallet.key.accAddress),
+// )
 
-const result = await terra.wasm.contractQuery(
-  process.env.ASTROPORT_DCA as string,
-  getConfig(),
-)
+// const result = await terra.wasm.contractQuery(
+//   process.env.ASTROPORT_DCA as string,
+//   getConfig(),
+// )
 
-console.log(inspect(result2, false, null))
+// console.log(inspect(result2, false, null))
 
 // const send = new MsgSend(
 //   k.publicKey?.address() as string,
@@ -101,22 +101,24 @@ console.log(inspect(result2, false, null))
 
 // console.log(executeTxResult)
 
-// const pairs = await getPairs()
+const pairs = await getPairs()
 
-// // console.log(inspect(pairs, false, null))
+// console.log(inspect(pairs, false, null))
 
-// const graph = createGraph(pairs)
-// const nativeTokens = getNativeTokens(pairs)
+const graph = createGraph(pairs)
+const nativeTokens = getNativeTokens(pairs)
 
-// for (const path of findPaths(
-//   graph,
-//   'uluna',
-//   'ibc/B3504E092456BA618CC28AC671A71FB08C6CA0FD0BE7C8A5B5A3E2DD933CC9E4',
-//   32,
-//   new Set(),
-// )) {
-//   console.log({ path })
-//   const result = await simulateSwap('20000000', path, nativeTokens)
+// console.log(inspect(graph, false, null))
 
-//   console.log({ result })
-// }
+for (const path of findPaths(
+  graph,
+  'terra1fjdlrkqjz5m6sx45ewekq55890k430p5fzr49fe72dmqpqcy349sjt5hxk',
+  'terra1lz4vhnt5xwnd7tpkezqddvp9ax4y39l4ydtjzxrdy2hy6tuvjpuqh7uwtl',
+  32,
+  new Set(),
+)) {
+  console.log({ path })
+  const result = await simulateSwap('2000000000', path, nativeTokens)
+
+  console.log({ result })
+}
