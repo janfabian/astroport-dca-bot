@@ -1,10 +1,9 @@
 import { Command } from 'commander'
 import { write } from '../db.js'
 import { tryCatch } from '../lib.js'
-import getUserDcaOrders from '../queries/get-user-dca-orders.js'
 import { getKey, getLCDClient } from '../terra.js'
-import { DcaQueryInfo } from '../types/astroport.js'
 import { User } from '../types/db.js'
+import { listOrders } from './list-orders.js'
 
 export async function addAddress(address, options) {
   const k = getKey()
@@ -13,10 +12,7 @@ export async function addAddress(address, options) {
 
   address = address ?? wallet.key.accAddress
 
-  const result: DcaQueryInfo[] = await terra.wasm.contractQuery(
-    process.env.ASTROPORT_DCA as string,
-    getUserDcaOrders(address),
-  )
+  const result = await listOrders(address)
 
   let orderIds = result.map((dca) => dca.order.id)
 

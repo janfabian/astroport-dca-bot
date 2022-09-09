@@ -52,3 +52,19 @@ export type SwapOperation = {
     ask_asset_info: AssetInfo
   }
 }
+
+export type ConfigQuery = {
+  max_hops: number
+  max_spread: string
+  whitelisted_fee_assets: Asset[]
+  whitelisted_tokens: AssetInfo[]
+  factory_addr: string
+  router_addr: string
+}
+
+export type UserConfigQuery = {
+  last_id: number
+  max_hops?: number
+  max_spread?: spread
+  tip_balance: Asset[]
+}

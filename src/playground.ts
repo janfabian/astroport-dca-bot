@@ -15,8 +15,6 @@ const k = getKey()
 const terra = await getLCDClient()
 const wallet = terra.wallet(k)
 
-console.log(new Coin('foo', '10000'))
-
 // const result2 = await terra.wasm.contractQuery(
 //   process.env.ASTROPORT_DCA as string,
 //   getUserConfig(wallet.key.accAddress),
@@ -114,8 +112,8 @@ const nativeTokens = getNativeTokens(pairs)
 
 for (const path of findPaths(
   graph,
-  'terra1fjdlrkqjz5m6sx45ewekq55890k430p5fzr49fe72dmqpqcy349sjt5hxk',
-  'terra1lz4vhnt5xwnd7tpkezqddvp9ax4y39l4ydtjzxrdy2hy6tuvjpuqh7uwtl',
+  'uluna',
+  'ibc/B3504E092456BA618CC28AC671A71FB08C6CA0FD0BE7C8A5B5A3E2DD933CC9E4',
   32,
   new Set(),
 )) {

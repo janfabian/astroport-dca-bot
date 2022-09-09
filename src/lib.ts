@@ -1,3 +1,4 @@
+import { inspect } from 'util'
 import { DEFAULT_WHITELISTED_TOKENS } from './astroport.js'
 import { AssetInfo, Pair } from './types/astroport.js'
 
@@ -14,6 +15,11 @@ export function getNativeTokens(pairs: Pair[]) {
 
 export function isNativeToken(assetInfo: AssetInfo) {
   return Boolean(assetInfo.native_token?.denom)
+}
+
+export function getDenom(assetInfo: AssetInfo) {
+  return (assetInfo.native_token?.denom ||
+    assetInfo.token?.contract_addr) as string
 }
 
 export function createGraph(pairs: Pair[]) {
@@ -99,7 +105,11 @@ export function* findPaths(
 export function tryCatch(fn) {
   return async function (...args) {
     try {
-      await fn(...args)
+      const result = await fn(...args)
+
+      if (result) {
+        console.log(inspect(result, false, null))
+      }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       if (e.response?.data) {

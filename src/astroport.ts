@@ -1,3 +1,4 @@
+import { inspect } from 'util'
 import { getLCDClient } from './terra.js'
 import { Pair, SwapOperation } from './types/astroport.js'
 
@@ -99,6 +100,7 @@ export async function simulateSwap(
   const lcd = await getLCDClient()
 
   const ops = swapOpsFromPath(path, nativeTokens)
+  console.log(inspect(ops, false, null))
 
   return await lcd.wasm.contractQuery(ROUTER, {
     simulate_swap_operations: {
