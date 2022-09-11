@@ -3,7 +3,8 @@ import { getNativeTokens, tryCatch } from '../lib.js'
 import { getKey, getLCDClient } from '../terra.js'
 import createDcaOrderExecute from '../executes/create-dca-order.js'
 import { addAddress } from './add-address.js'
-import { getPairs, nativeToken, token } from '../astroport.js'
+import { getPairs } from '../astroport.js'
+import { nativeToken, token } from '../lib.js'
 import { myParseInt } from './lib.js'
 
 export async function createDcaOrder(options) {

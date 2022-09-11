@@ -1,4 +1,4 @@
-import { nativeToken, token } from './astroport.js'
+import { fromMapToAssetList, nativeToken, token } from './lib.js'
 import {
   createGraph,
   feeRedeem,
@@ -72,6 +72,29 @@ describe('fromAssetListToMap', () => {
     const assetMap = fromAssetListToMap(assetList)
 
     expect(assetMap).toEqual({ uluna: '1000', addr: '100' })
+  })
+})
+
+describe('fromMapToAssetList', () => {
+  it('returns empty', () => {
+    const asset = {}
+    const nativeTokens = new Set([])
+
+    const assetList = fromMapToAssetList(asset, nativeTokens)
+
+    expect(assetList).toEqual([])
+  })
+
+  it('native and contract', () => {
+    const asset = { uluna: BigInt('1000'), addr: BigInt('100') }
+    const nativeTokens = new Set(['uluna'])
+
+    const assetList = fromMapToAssetList(asset, nativeTokens)
+
+    expect(assetList).toEqual([
+      { info: nativeToken('uluna'), amount: '1000' },
+      { info: token('addr'), amount: '100' },
+    ])
   })
 })
 

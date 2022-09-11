@@ -17,6 +17,29 @@ export function isNativeToken(assetInfo: AssetInfo) {
   return Boolean(assetInfo.native_token?.denom)
 }
 
+export function nativeToken(denom: string) {
+  return {
+    native_token: {
+      denom: denom,
+    },
+  }
+}
+
+export function token(contractAddr: string) {
+  return {
+    token: {
+      contract_addr: contractAddr,
+    },
+  }
+}
+
+export function createAssetInfo(
+  denom: string,
+  nativeTokens: Set<string>,
+): AssetInfo {
+  return nativeTokens.has(denom) ? nativeToken(denom) : token(denom)
+}
+
 export function getDenom(assetInfo: AssetInfo) {
   return (assetInfo.native_token?.denom ||
     assetInfo.token?.contract_addr) as string
@@ -28,13 +51,15 @@ export function fromAssetListToMap(assetList: Asset[]): DenomAmountMap {
   }, {})
 }
 
-// export function fromMapToAssetList(assetMap: DenomAmountMap): Asset[] {
-//   Object.entries(assetMap).map(([denom, amount]) => {})
-
-//   return assetList.reduce((acc, asset) => {
-//     return { ...acc, [getDenom(asset.info)]: asset.amount }
-//   }, {})
-// }
+export function fromMapToAssetList(
+  assetMap: DenomAmountMap,
+  nativeTokens: Set<string>,
+): Asset[] {
+  return Object.entries(assetMap).map(([denom, amount]) => ({
+    info: createAssetInfo(denom, nativeTokens),
+    amount: amount.toString(),
+  }))
+}
 
 export function feeRedeem(
   whitelistedFees: DenomAmountMap,
