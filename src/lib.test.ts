@@ -1,5 +1,12 @@
 import { nativeToken, token } from './astroport.js'
-import { createGraph, findPaths, getNativeTokens, Graph } from './lib.js'
+import {
+  createGraph,
+  feeRedeem,
+  findPaths,
+  fromAssetListToMap,
+  getNativeTokens,
+  Graph,
+} from './lib.js'
 
 describe('getNativeTokens', () => {
   it('returns empty', () => {
@@ -44,6 +51,122 @@ describe('getNativeTokens', () => {
     const nativeTokens = getNativeTokens(pairs)
 
     expect(nativeTokens).toEqual(new Set(['uluna', 'uluna2']))
+  })
+})
+
+describe('fromAssetListToMap', () => {
+  it('returns empty', () => {
+    const assetList = []
+
+    const assetMap = fromAssetListToMap(assetList)
+
+    expect(assetMap).toEqual({})
+  })
+
+  it('native and contract', () => {
+    const assetList = [
+      { info: nativeToken('uluna'), amount: '1000' },
+      { info: token('addr'), amount: '100' },
+    ]
+
+    const assetMap = fromAssetListToMap(assetList)
+
+    expect(assetMap).toEqual({ uluna: '1000', addr: '100' })
+  })
+})
+
+describe('feeRedeem', () => {
+  it('returns empty', () => {
+    const whitelistedFees = {}
+    const tipBalance = {}
+    const hops = 0
+    const preferedFeeDenom = []
+
+    const fees = feeRedeem(whitelistedFees, tipBalance, hops, preferedFeeDenom)
+
+    expect(fees).toEqual([])
+  })
+
+  it('single fee asset', () => {
+    const whitelistedFees = { uluna: BigInt(1) }
+    const tipBalance = { uluna: BigInt(100) }
+    const hops = 3
+    const preferedFeeDenom = []
+
+    const fees = feeRedeem(whitelistedFees, tipBalance, hops, preferedFeeDenom)
+
+    expect(fees).toEqual([
+      { uluna: BigInt(1) },
+      { uluna: BigInt(1) },
+      { uluna: BigInt(1) },
+    ])
+  })
+
+  it('multiple fee asset', () => {
+    const whitelistedFees = { uluna: BigInt(1), axlUSDC: BigInt(2) }
+    const tipBalance = { uluna: BigInt(1), axlUSDC: BigInt(4) }
+    const hops = 3
+    const preferedFeeDenom = []
+
+    const fees = feeRedeem(whitelistedFees, tipBalance, hops, preferedFeeDenom)
+
+    expect(fees).toEqual([
+      { uluna: BigInt(1) },
+      { axlUSDC: BigInt(2) },
+      { axlUSDC: BigInt(2) },
+    ])
+  })
+
+  it('multiple fee asset preferred', () => {
+    const whitelistedFees = { uluna: BigInt(1), axlUSDC: BigInt(2) }
+    const tipBalance = { uluna: BigInt(10), axlUSDC: BigInt(10) }
+    const hops = 3
+    const preferedFeeDenom = ['axlUSDC']
+
+    const fees = feeRedeem(whitelistedFees, tipBalance, hops, preferedFeeDenom)
+
+    expect(fees).toEqual([
+      { axlUSDC: BigInt(2) },
+      { axlUSDC: BigInt(2) },
+      { axlUSDC: BigInt(2) },
+    ])
+  })
+
+  it('multiple fee asset preferred multiple', () => {
+    const whitelistedFees = { uluna: BigInt(1), axlUSDC: BigInt(2) }
+    const tipBalance = { uluna: BigInt(10), axlUSDC: BigInt(2) }
+    const hops = 3
+    const preferedFeeDenom = ['axlUSDC', 'uluna']
+
+    const fees = feeRedeem(whitelistedFees, tipBalance, hops, preferedFeeDenom)
+
+    expect(fees).toEqual([
+      { axlUSDC: BigInt(2) },
+      { uluna: BigInt(1) },
+      { uluna: BigInt(1) },
+    ])
+  })
+
+  it('not enough asset', () => {
+    const whitelistedFees = { uluna: BigInt(1), axlUSDC: BigInt(2) }
+    const tipBalance = { uluna: BigInt(0) }
+    const hops = 1
+    const preferedFeeDenom = []
+
+    const fees = feeRedeem(whitelistedFees, tipBalance, hops, preferedFeeDenom)
+
+    expect(fees).toEqual(null)
+  })
+
+  it('not enough asset multiple', () => {
+    const whitelistedFees = { uluna: BigInt(1), axlUSDC: BigInt(2) }
+    const tipBalance = { uluna: BigInt(4), axlUSDC: BigInt(1) }
+    const hops = 5
+    const preferedFeeDenom = []
+
+    const fees = feeRedeem(whitelistedFees, tipBalance, hops, preferedFeeDenom)
+
+    expect(fees).toEqual(null)
   })
 })
 

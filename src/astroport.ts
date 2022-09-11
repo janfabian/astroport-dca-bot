@@ -100,7 +100,6 @@ export async function simulateSwap(
   const lcd = await getLCDClient()
 
   const ops = swapOpsFromPath(path, nativeTokens)
-  console.log(inspect(ops, false, null))
 
   return await lcd.wasm.contractQuery(ROUTER, {
     simulate_swap_operations: {

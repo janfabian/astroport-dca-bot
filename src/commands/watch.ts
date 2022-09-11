@@ -2,6 +2,7 @@ import { Command } from 'commander'
 import {
   createGraph,
   findPaths,
+  fromAssetListToMap,
   getDenom,
   getNativeTokens,
   tryCatch,
@@ -10,12 +11,24 @@ import { myParseInt } from './lib.js'
 import { list } from '../db.js'
 import { listOrders } from './list-orders.js'
 import { getPairs, simulateSwap } from '../astroport.js'
+import { getConfig } from './get-config.js'
+import { getUserConfig } from './get-user-config.js'
+import { inspect } from 'util'
 
 export async function watch(options) {
   const pairs = await getPairs()
   const graph = createGraph(pairs)
   const nativeTokens = getNativeTokens(pairs)
 
+  const config = await getConfig()
+  const userConfig = await getUserConfig()
+  const maxHops = userConfig.max_hops ?? config.max_hops
+  const maxSpread = userConfig.max_spread ?? config.max_spread
+
+  const whitelistedFees = fromAssetListToMap(config.whitelisted_fee_assets)
+  const tipBalance = fromAssetListToMap(userConfig.tip_balance)
+
+  console.log(inspect({ config, userConfig }, false, null))
   ;(async function iterate() {
     const adresses = list()
     if (adresses.length === 0) {
@@ -35,7 +48,7 @@ export async function watch(options) {
           graph,
           initialDenom,
           targetDenom,
-          32,
+          maxHops,
           new Set(),
         )) {
           console.log({ path })
@@ -45,6 +58,7 @@ export async function watch(options) {
               path,
               nativeTokens,
             )
+
             console.log({ result })
           } catch (e) {
             console.log('ERROR')

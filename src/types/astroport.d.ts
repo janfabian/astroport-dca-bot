@@ -68,3 +68,7 @@ export type UserConfigQuery = {
   max_spread?: spread
   tip_balance: Asset[]
 }
+
+export type DenomAmountMap = {
+  [key: string]: bigint
+}

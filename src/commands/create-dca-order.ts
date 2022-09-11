@@ -4,7 +4,6 @@ import { getKey, getLCDClient } from '../terra.js'
 import createDcaOrderExecute from '../executes/create-dca-order.js'
 import { addAddress } from './add-address.js'
 import { getPairs, nativeToken, token } from '../astroport.js'
-import { inspect } from 'util'
 import { myParseInt } from './lib.js'
 
 export async function createDcaOrder(options) {
@@ -39,9 +38,9 @@ export async function createDcaOrder(options) {
 
   const executeTxResult = await terra.tx.broadcast(executeTx)
 
-  console.log(executeTxResult)
-
   await addAddress(wallet.key.accAddress, {})
+
+  return executeTxResult
 }
 
 export function parseInitialAsset(initial: string) {

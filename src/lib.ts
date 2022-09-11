@@ -1,6 +1,6 @@
 import { inspect } from 'util'
 import { DEFAULT_WHITELISTED_TOKENS } from './astroport.js'
-import { AssetInfo, Pair } from './types/astroport.js'
+import { Asset, AssetInfo, DenomAmountMap, Pair } from './types/astroport.js'
 
 export type Graph = Map<string, Set<string>>
 export type Path = string[]
@@ -20,6 +20,66 @@ export function isNativeToken(assetInfo: AssetInfo) {
 export function getDenom(assetInfo: AssetInfo) {
   return (assetInfo.native_token?.denom ||
     assetInfo.token?.contract_addr) as string
+}
+
+export function fromAssetListToMap(assetList: Asset[]): DenomAmountMap {
+  return assetList.reduce((acc, asset) => {
+    return { ...acc, [getDenom(asset.info)]: asset.amount }
+  }, {})
+}
+
+// export function fromMapToAssetList(assetMap: DenomAmountMap): Asset[] {
+//   Object.entries(assetMap).map(([denom, amount]) => {})
+
+//   return assetList.reduce((acc, asset) => {
+//     return { ...acc, [getDenom(asset.info)]: asset.amount }
+//   }, {})
+// }
+
+export function feeRedeem(
+  whitelistedFees: DenomAmountMap,
+  tipBalance: DenomAmountMap,
+  hops: number,
+  preferedFeeDenom: string[] = [],
+): DenomAmountMap[] | null {
+  const whitelistedDenoms = Object.keys(whitelistedFees)
+  const tipBalanceDenoms = Object.keys(tipBalance)
+
+  let denoms = preferedFeeDenom.filter((denom) =>
+    whitelistedDenoms.includes(denom),
+  )
+
+  denoms = denoms
+    .concat(whitelistedDenoms)
+    .filter((denom, pos, a) => a.indexOf(denom) === pos)
+    .filter((denom) => tipBalanceDenoms.includes(denom))
+
+  let i_hop = 0
+  let i_d = 0
+  const result: DenomAmountMap[] = []
+
+  while (i_hop < hops) {
+    const denom = denoms[i_d]
+    if (!denom) {
+      break
+    }
+
+    const feeAmount = whitelistedFees[denom]
+    tipBalance[denom] -= feeAmount
+
+    if (tipBalance[denom] >= 0n) {
+      i_hop++
+      result.push({ [denom]: feeAmount })
+    } else {
+      i_d++
+    }
+  }
+
+  if (result.length !== hops) {
+    return null
+  }
+
+  return result
 }
 
 export function createGraph(pairs: Pair[]) {
