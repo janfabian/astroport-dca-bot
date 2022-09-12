@@ -17,6 +17,35 @@ import { getConfig } from './get-config.js'
 import { getUserConfig } from './get-user-config.js'
 import { inspect } from 'util'
 import { Asset, SwapOperation } from '../types/astroport.js'
+import performDcaPurchaseExecute from '../executes/perform-dca-purchase.js'
+import { getKey, getLCDClient } from '../terra.js'
+
+export async function performDcaPurchase(
+  orderId: number,
+  address: string,
+  hops: SwapOperation[],
+  feeRedeem: Asset[],
+) {
+  const k = getKey()
+  const terra = await getLCDClient()
+  const wallet = terra.wallet(k)
+
+  const msgs = performDcaPurchaseExecute(
+    wallet,
+    orderId,
+    address,
+    hops,
+    feeRedeem,
+  )
+
+  const executeTx = await wallet.createAndSignTx({
+    msgs: msgs,
+  })
+
+  const executeTxResult = await terra.tx.broadcast(executeTx)
+
+  return executeTxResult
+}
 
 export async function watch(options) {
   ;(async function iterate() {
@@ -105,7 +134,25 @@ export async function watch(options) {
           }
         }
 
-        if (bestOffer.swapOps) {
+        if (bestOffer.swapOps && bestOffer.feeRedeem) {
+          try {
+            const result = await performDcaPurchase(
+              order.order.id,
+              address.address,
+              bestOffer.swapOps,
+              bestOffer.feeRedeem,
+            )
+
+            console.log(
+              `[Address: ${address.address}, orderId: ${order.order.id}]: dca purchase result:`,
+              result,
+            )
+          } catch (e) {
+            console.error(
+              `[Address: ${address.address}, orderId: ${order.order.id}]: dca purchase error:`,
+              e,
+            )
+          }
         } else {
           console.warn(
             `[Address: ${address.address}, orderId: ${order.order.id}]:`,

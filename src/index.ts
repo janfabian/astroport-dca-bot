@@ -8,6 +8,7 @@ import watchCommand from './commands/watch.js'
 import getConfigCommand from './commands/get-config.js'
 import getUserConfigCommand from './commands/get-user-config.js'
 import addBotTipCommand from './commands/add-bot-tip.js'
+import updateUserConfigCommand from './commands/update-user-config.js'
 
 const program = new Command()
 
@@ -22,6 +23,7 @@ createDcaOrderCommand(program)
 getConfigCommand(program)
 getUserConfigCommand(program)
 listOrdersCommand(program)
+updateUserConfigCommand(program)
 watchCommand(program)
 
 program.parse()
