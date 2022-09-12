@@ -32,3 +32,15 @@ export function write(user: User, location = DEFAULT_DB_LOCATION) {
 
   fs.writeFileSync(location, JSON.stringify(users))
 }
+
+export function remove(user: User, location = DEFAULT_DB_LOCATION) {
+  const users = list(location)
+
+  const ix = users.findIndex((u) => u.address === user.address)
+
+  if (ix > -1) {
+    users.splice(ix, 1)
+  }
+
+  fs.writeFileSync(location, JSON.stringify(users))
+}

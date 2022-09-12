@@ -1,5 +1,5 @@
 import { unlinkSync, writeFileSync } from 'fs'
-import { list, write } from './db.js'
+import { list, remove, write } from './db.js'
 
 describe('db', () => {
   describe('list', () => {
@@ -79,6 +79,59 @@ describe('db', () => {
       unlinkSync(file)
 
       expect(result).toEqual([user])
+    })
+  })
+
+  describe('remove', () => {
+    it('nonexisting db', () => {
+      const file = '__remove_nonexisting.json'
+      const user = { address: 'pkey' }
+      remove(user, file)
+
+      const result = list(file)
+      unlinkSync(file)
+
+      expect(result).toEqual([])
+    })
+
+    it('empty db', () => {
+      const file = '__remove_testemptydb.json'
+      writeFileSync(file, '')
+      const user = { address: 'pkey' }
+      remove(user, file)
+
+      const result = list(file)
+      unlinkSync(file)
+
+      expect(result).toEqual([])
+    })
+
+    it('db not found item', () => {
+      const data = [{ address: 'pkey1' }]
+      const file = '__write_testdb_new.json'
+      writeFileSync(file, JSON.stringify(data))
+
+      const user = { address: 'pkey2' }
+      remove(user, file)
+      const result = list(file)
+
+      unlinkSync(file)
+
+      expect(result).toEqual(data)
+    })
+
+    it('db remove item', () => {
+      const data = [{ address: 'pkey1' }]
+      const file = '__write_testdb_update.json'
+      writeFileSync(file, JSON.stringify(data))
+
+      const user = { address: 'pkey1', orderIds: [1] }
+      remove(user, file)
+      const result = list(file)
+
+      unlinkSync(file)
+
+      expect(result).toEqual([])
     })
   })
 })
