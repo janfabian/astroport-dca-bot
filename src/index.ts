@@ -3,7 +3,7 @@ import 'dotenv/config'
 import { Command } from 'commander'
 import addAddressCommand from './commands/add-address.js'
 import createDcaOrderCommand from './commands/create-dca-order.js'
-import listOrdersCommand from './commands/list-orders.js'
+import getDcaOrdersCommand from './commands/get-dca-orders.js'
 import watchCommand from './commands/watch.js'
 import getConfigCommand from './commands/get-config.js'
 import getUserConfigCommand from './commands/get-user-config.js'
@@ -23,7 +23,7 @@ addBotTipCommand(program)
 createDcaOrderCommand(program)
 getConfigCommand(program)
 getUserConfigCommand(program)
-listOrdersCommand(program)
+getDcaOrdersCommand(program)
 updateUserConfigCommand(program)
 watchCommand(program)
 withdrawCommand(program)

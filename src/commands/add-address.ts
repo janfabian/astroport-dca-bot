@@ -3,7 +3,7 @@ import { write } from '../db.js'
 import { tryCatch } from '../lib.js'
 import { getKey, getLCDClient } from '../terra.js'
 import { User } from '../types/db.js'
-import { listOrders } from './list-orders.js'
+import { getDcaOrders } from './get-dca-orders.js'
 
 export async function addAddress(address, options) {
   const k = getKey()
@@ -12,7 +12,7 @@ export async function addAddress(address, options) {
 
   address = address ?? wallet.key.accAddress
 
-  const result = await listOrders(address)
+  const result = await getDcaOrders(address)
 
   let orderIds = result.map((dca) => dca.order.id)
 

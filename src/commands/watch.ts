@@ -11,7 +11,7 @@ import {
 } from '../lib.js'
 import { myParseInt } from './lib.js'
 import { list } from '../db.js'
-import { listOrders } from './list-orders.js'
+import { getDcaOrders } from './get-dca-orders.js'
 import { getPairs, simulateSwap, swapOpsFromPath } from '../astroport.js'
 import { getConfig } from './get-config.js'
 import { getUserConfig } from './get-user-config.js'
@@ -68,7 +68,7 @@ export async function watch(options) {
       const whiteListedDenoms = new Set(Object.keys(whitelistedFees))
       const tipBalance = fromAssetListToMap(userConfig.tip_balance)
 
-      let orders = await listOrders(address.address)
+      let orders = await getDcaOrders(address.address)
 
       orders = orders
         .filter((o) => address.orderIds?.includes(o.order.id))

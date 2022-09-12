@@ -4,7 +4,7 @@ import getUserDcaOrders from '../queries/get-user-dca-orders.js'
 import { getKey, getLCDClient } from '../terra.js'
 import { DcaQueryInfo } from '../types/astroport.js'
 
-export async function listOrders(address?: string): Promise<DcaQueryInfo[]> {
+export async function getDcaOrders(address?: string): Promise<DcaQueryInfo[]> {
   const k = getKey()
   const terra = await getLCDClient()
   const wallet = terra.wallet(k)
@@ -17,10 +17,10 @@ export async function listOrders(address?: string): Promise<DcaQueryInfo[]> {
   return result
 }
 
-export default function listOrdersCommand(program: Command) {
+export default function getDcaOrdersCommand(program: Command) {
   program
-    .command('list-orders')
+    .command('get-dca-orders')
     .description('List orders for given address')
     .argument('[string]', 'address')
-    .action(tryCatch(listOrders))
+    .action(tryCatch(getDcaOrders))
 }
