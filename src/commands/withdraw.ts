@@ -4,9 +4,9 @@ import { getKey, getLCDClient } from '../terra.js'
 import { getPairs } from '../astroport.js'
 import { nativeToken, token } from '../lib.js'
 import { Asset } from '../types/astroport.js'
-import addBotTipExecute from '../executes/add-bot-tip.js'
+import withdrawExecute from '../executes/withdraw.js'
 
-export async function addBotTip(options) {
+export async function withdraw(options) {
   const optionAssets: string[] = options.assets
 
   if (optionAssets.length % 2 !== 0) {
@@ -33,7 +33,7 @@ export async function addBotTip(options) {
     assets.push(asset)
   }
 
-  const msgs = addBotTipExecute(wallet, assets)
+  const msgs = withdrawExecute(wallet, assets)
 
   const executeTx = await wallet.createAndSignTx({
     msgs: msgs,
@@ -44,13 +44,13 @@ export async function addBotTip(options) {
   return executeTxResult
 }
 
-export default function addBotTipCommand(program: Command) {
+export default function withdrawCommand(program: Command) {
   program
-    .command('add-bot-tip')
-    .description('Adds funds for DCA purchases bot fees')
+    .command('withdraw')
+    .description('Withdraw funds for DCA purchases bot fees')
     .requiredOption(
       '-a, --assets <strings...>',
       'bot fee asset info, ex. 100 uluna',
     )
-    .action(tryCatch(addBotTip))
+    .action(tryCatch(withdraw))
 }

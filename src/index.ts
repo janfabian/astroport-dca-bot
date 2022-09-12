@@ -9,6 +9,7 @@ import getConfigCommand from './commands/get-config.js'
 import getUserConfigCommand from './commands/get-user-config.js'
 import addBotTipCommand from './commands/add-bot-tip.js'
 import updateUserConfigCommand from './commands/update-user-config.js'
+import withdrawCommand from './commands/withdraw.js'
 
 const program = new Command()
 
@@ -25,5 +26,6 @@ getUserConfigCommand(program)
 listOrdersCommand(program)
 updateUserConfigCommand(program)
 watchCommand(program)
+withdrawCommand(program)
 
 program.parse()
