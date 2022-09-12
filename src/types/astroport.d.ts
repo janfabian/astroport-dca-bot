@@ -36,6 +36,7 @@ export type Order = {
   target_asset: AssetInfo
   interval: number
   dca_amount: string
+  last_purchase: number
   first_purchase?: number
 }
 
@@ -71,4 +72,8 @@ export type UserConfigQuery = {
 
 export type DenomAmountMap = {
   [key: string]: bigint
+}
+
+export type SimulateSwapQuery = {
+  amount: string
 }

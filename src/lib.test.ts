@@ -191,6 +191,32 @@ describe('feeRedeem', () => {
 
     expect(fees).toEqual(null)
   })
+
+  it('not enough asset after previous sucessfull redeem', () => {
+    const whitelistedFees = { uluna: BigInt(1), axlUSDC: BigInt(2) }
+    const tipBalance = { uluna: BigInt(4), axlUSDC: BigInt(3) }
+    const hops = 5
+    const preferedFeeDenom = []
+
+    const fees = feeRedeem(whitelistedFees, tipBalance, hops, preferedFeeDenom)
+
+    expect(fees).toEqual([
+      { uluna: BigInt(1) },
+      { uluna: BigInt(1) },
+      { uluna: BigInt(1) },
+      { uluna: BigInt(1) },
+      { axlUSDC: BigInt(2) },
+    ])
+
+    const fees2nd = feeRedeem(
+      whitelistedFees,
+      tipBalance,
+      hops,
+      preferedFeeDenom,
+    )
+
+    expect(fees2nd).toEqual(null)
+  })
 })
 
 describe('createGraph', () => {

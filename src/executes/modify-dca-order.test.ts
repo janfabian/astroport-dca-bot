@@ -50,6 +50,7 @@ describe('modifyDcaOrder', () => {
       initial_asset: initialAsset,
       target_asset: targetAsset,
       interval: interval,
+      last_purchase: 0,
       dca_amount: dcaAmount,
     }
 
@@ -114,6 +115,7 @@ describe('modifyDcaOrder', () => {
       initial_asset: initialAsset,
       target_asset: targetAsset,
       interval: interval,
+      last_purchase: 0,
       dca_amount: dcaAmount,
     }
 
@@ -180,6 +182,7 @@ describe('modifyDcaOrder', () => {
       initial_asset: initialAsset,
       target_asset: targetAsset,
       interval: interval,
+      last_purchase: 0,
       dca_amount: dcaAmount,
     }
 
@@ -244,6 +247,7 @@ describe('modifyDcaOrder', () => {
       initial_asset: initialAsset,
       target_asset: targetAsset,
       interval: interval,
+      last_purchase: 0,
       dca_amount: dcaAmount,
     }
 
@@ -308,6 +312,7 @@ describe('modifyDcaOrder', () => {
       initial_asset: initialAsset,
       target_asset: targetAsset,
       interval: interval,
+      last_purchase: 0,
       dca_amount: dcaAmount,
     }
 
@@ -388,6 +393,7 @@ describe('modifyDcaOrder', () => {
       initial_asset: initialAsset,
       target_asset: targetAsset,
       interval: interval,
+      last_purchase: 0,
       dca_amount: dcaAmount,
     }
 
@@ -468,6 +474,7 @@ describe('modifyDcaOrder', () => {
       initial_asset: initialAsset,
       target_asset: targetAsset,
       interval: interval,
+      last_purchase: 0,
       dca_amount: dcaAmount,
     }
 
@@ -558,6 +565,7 @@ describe('modifyDcaOrder', () => {
       initial_asset: initialAsset,
       target_asset: targetAsset,
       interval: interval,
+      last_purchase: 0,
       dca_amount: dcaAmount,
     }
 
@@ -636,6 +644,7 @@ describe('modifyDcaOrder', () => {
       initial_asset: initialAsset,
       target_asset: targetAsset,
       interval: interval,
+      last_purchase: 0,
       dca_amount: dcaAmount,
     }
 

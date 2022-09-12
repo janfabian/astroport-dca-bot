@@ -90,9 +90,10 @@ export function feeRedeem(
     }
 
     const feeAmount = whitelistedFees[denom]
-    tipBalance[denom] -= feeAmount
+    const tipBalanceAfter = tipBalance[denom] - feeAmount
 
-    if (tipBalance[denom] >= 0n) {
+    if (tipBalanceAfter >= 0n) {
+      tipBalance[denom] = tipBalanceAfter
       i_hop++
       result.push({ [denom]: feeAmount })
     } else {

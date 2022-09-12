@@ -7,6 +7,7 @@ import listOrdersCommand from './commands/list-orders.js'
 import watchCommand from './commands/watch.js'
 import getConfigCommand from './commands/get-config.js'
 import getUserConfigCommand from './commands/get-user-config.js'
+import addBotTipCommand from './commands/add-bot-tip.js'
 
 const program = new Command()
 
@@ -16,10 +17,11 @@ program
   .version('0.9.0')
 
 addAddressCommand(program)
+addBotTipCommand(program)
 createDcaOrderCommand(program)
-watchCommand(program)
-listOrdersCommand(program)
 getConfigCommand(program)
 getUserConfigCommand(program)
+listOrdersCommand(program)
+watchCommand(program)
 
 program.parse()

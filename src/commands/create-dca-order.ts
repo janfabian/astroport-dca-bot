@@ -1,11 +1,11 @@
-import { Command, InvalidOptionArgumentError } from 'commander'
+import { Command } from 'commander'
 import { getNativeTokens, tryCatch } from '../lib.js'
 import { getKey, getLCDClient } from '../terra.js'
 import createDcaOrderExecute from '../executes/create-dca-order.js'
 import { addAddress } from './add-address.js'
 import { getPairs } from '../astroport.js'
 import { nativeToken, token } from '../lib.js'
-import { myParseInt } from './lib.js'
+import { myParseInt, parseInitialAsset } from './lib.js'
 
 export async function createDcaOrder(options) {
   const k = getKey()
@@ -42,18 +42,6 @@ export async function createDcaOrder(options) {
   await addAddress(wallet.key.accAddress, {})
 
   return executeTxResult
-}
-
-export function parseInitialAsset(initial: string) {
-  const [initialAmount, initialDenom] = initial.split(' ')
-
-  if (!initialAmount || !initialDenom) {
-    throw new InvalidOptionArgumentError(
-      `Bad parsing of the initial option value, option value provided ${initial}. Required form "[amount] [denom | contract_address]", examples: 100 uluna, 100 token_contract_addr.`,
-    )
-  }
-
-  return [initialAmount, initialDenom]
 }
 
 export default function createDcaOrderCommand(program: Command) {

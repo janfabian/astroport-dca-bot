@@ -73,52 +73,43 @@ const wallet = terra.wallet(k)
 
 // console.log(executeTxResult)
 
-// const msgs = createDcaOrder(
-//   wallet,
-//   {
-//     info: {
-//       native_token: {
-//         denom: 'uluna',
-//       },
-//     },
-//     amount: '100',
-//   },
-//   {
-//     token: {
-//       contract_addr:
-//         'terra167dsqkh2alurx997wmycw9ydkyu54gyswe3ygmrs4lwume3vmwks8ruqnv',
-//     },
-//   },
-//   10,
-//   '10',
-// )
+const msgs = new MsgExecuteContract(
+  wallet.key.accAddress,
+  'terra167dsqkh2alurx997wmycw9ydkyu54gyswe3ygmrs4lwume3vmwks8ruqnv',
+  {
+    decrease_allowance: {
+      spender: process.env.ASTROPORT_DCA,
+      amount: '4',
+    },
+  },
+)
 
-// const executeTx = await wallet.createAndSignTx({
-//   msgs: msgs,
-// })
+const executeTx = await wallet.createAndSignTx({
+  msgs: [msgs],
+})
 
-// const executeTxResult = await terra.tx.broadcast(executeTx)
+const executeTxResult = await terra.tx.broadcast(executeTx)
 
-// console.log(executeTxResult)
+console.log(executeTxResult)
 
-const pairs = await getPairs()
+// const pairs = await getPairs()
 
 // console.log(inspect(pairs, false, null))
 
-const graph = createGraph(pairs)
-const nativeTokens = getNativeTokens(pairs)
+// const graph = createGraph(pairs)
+// const nativeTokens = getNativeTokens(pairs)
 
 // console.log(inspect(graph, false, null))
 
-for (const path of findPaths(
-  graph,
-  'uluna',
-  'ibc/B3504E092456BA618CC28AC671A71FB08C6CA0FD0BE7C8A5B5A3E2DD933CC9E4',
-  32,
-  new Set(),
-)) {
-  console.log({ path })
-  const result = await simulateSwap('2000000000', path, nativeTokens)
+// for (const path of findPaths(
+//   graph,
+//   'uluna',
+//   'ibc/B3504E092456BA618CC28AC671A71FB08C6CA0FD0BE7C8A5B5A3E2DD933CC9E4',
+//   32,
+//   new Set(),
+// )) {
+//   console.log({ path })
+//   const result = await simulateSwap('2000000000', path, nativeTokens)
 
-  console.log({ result })
-}
+//   console.log({ result })
+// }

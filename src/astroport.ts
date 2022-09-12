@@ -1,6 +1,6 @@
 import { createAssetInfo } from './lib.js'
 import { getLCDClient } from './terra.js'
-import { Pair, SwapOperation } from './types/astroport.js'
+import { Pair, SimulateSwapQuery, SwapOperation } from './types/astroport.js'
 
 export const FACTORY = process.env.ASTROPORT_FACTORY as string
 export const ROUTER = process.env.ASTROPORT_ROUTER as string
@@ -78,7 +78,7 @@ export async function simulateSwap(
   amount: string,
   path: string[],
   nativeTokens: Set<string>,
-) {
+): Promise<SimulateSwapQuery> {
   const lcd = await getLCDClient()
 
   const ops = swapOpsFromPath(path, nativeTokens)
