@@ -47,6 +47,7 @@ describe('modifyDcaOrder', () => {
     const modifiedDcaAmount = '100'
 
     const originalOrder = {
+      id,
       initial_asset: initialAsset,
       target_asset: targetAsset,
       interval: interval,
@@ -56,7 +57,6 @@ describe('modifyDcaOrder', () => {
 
     const result = modifyDcaOrder(
       wallet,
-      id,
       originalOrder,
       modifiedInitialAsset,
       modifiedTargetAsset,
@@ -112,6 +112,7 @@ describe('modifyDcaOrder', () => {
     const dcaAmount = '10'
 
     const originalOrder = {
+      id,
       initial_asset: initialAsset,
       target_asset: targetAsset,
       interval: interval,
@@ -121,7 +122,6 @@ describe('modifyDcaOrder', () => {
 
     const result = modifyDcaOrder(
       wallet,
-      id,
       originalOrder,
       modifiedInitialAsset,
       targetAsset,
@@ -179,6 +179,7 @@ describe('modifyDcaOrder', () => {
     const dcaAmount = '10'
 
     const originalOrder = {
+      id,
       initial_asset: initialAsset,
       target_asset: targetAsset,
       interval: interval,
@@ -188,7 +189,6 @@ describe('modifyDcaOrder', () => {
 
     const result = modifyDcaOrder(
       wallet,
-      id,
       originalOrder,
       modifiedInitialAsset,
       targetAsset,
@@ -244,6 +244,7 @@ describe('modifyDcaOrder', () => {
     const dcaAmount = '10'
 
     const originalOrder = {
+      id,
       initial_asset: initialAsset,
       target_asset: targetAsset,
       interval: interval,
@@ -253,7 +254,6 @@ describe('modifyDcaOrder', () => {
 
     const result = modifyDcaOrder(
       wallet,
-      id,
       originalOrder,
       modifiedInitialAsset,
       targetAsset,
@@ -309,6 +309,7 @@ describe('modifyDcaOrder', () => {
     const dcaAmount = '10'
 
     const originalOrder = {
+      id,
       initial_asset: initialAsset,
       target_asset: targetAsset,
       interval: interval,
@@ -318,7 +319,6 @@ describe('modifyDcaOrder', () => {
 
     const result = modifyDcaOrder(
       wallet,
-      id,
       originalOrder,
       modifiedInitialAsset,
       targetAsset,
@@ -390,6 +390,7 @@ describe('modifyDcaOrder', () => {
     const dcaAmount = '10'
 
     const originalOrder = {
+      id,
       initial_asset: initialAsset,
       target_asset: targetAsset,
       interval: interval,
@@ -399,7 +400,6 @@ describe('modifyDcaOrder', () => {
 
     const result = modifyDcaOrder(
       wallet,
-      id,
       originalOrder,
       modifiedInitialAsset,
       targetAsset,
@@ -471,6 +471,7 @@ describe('modifyDcaOrder', () => {
     const dcaAmount = '10'
 
     const originalOrder = {
+      id,
       initial_asset: initialAsset,
       target_asset: targetAsset,
       interval: interval,
@@ -480,7 +481,6 @@ describe('modifyDcaOrder', () => {
 
     const result = modifyDcaOrder(
       wallet,
-      id,
       originalOrder,
       modifiedInitialAsset,
       targetAsset,
@@ -562,6 +562,7 @@ describe('modifyDcaOrder', () => {
     const dcaAmount = '10'
 
     const originalOrder = {
+      id,
       initial_asset: initialAsset,
       target_asset: targetAsset,
       interval: interval,
@@ -571,7 +572,6 @@ describe('modifyDcaOrder', () => {
 
     const result = modifyDcaOrder(
       wallet,
-      id,
       originalOrder,
       modifiedInitialAsset,
       targetAsset,
@@ -641,6 +641,7 @@ describe('modifyDcaOrder', () => {
     const dcaAmount = '10'
 
     const originalOrder = {
+      id,
       initial_asset: initialAsset,
       target_asset: targetAsset,
       interval: interval,
@@ -650,7 +651,6 @@ describe('modifyDcaOrder', () => {
 
     const result = modifyDcaOrder(
       wallet,
-      id,
       originalOrder,
       modifiedInitialAsset,
       targetAsset,

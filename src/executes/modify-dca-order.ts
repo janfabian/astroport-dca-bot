@@ -4,8 +4,7 @@ import { Asset, AssetInfo, Order } from '../types/astroport.js'
 
 export default function modifyDcaOrder(
   wallet: Wallet,
-  id: number,
-  originalOrder: Order,
+  originalOrder: Order & { id: number },
   newInitialAsset?: Asset,
   newTargetAsset?: AssetInfo,
   newInterval?: number,
@@ -13,6 +12,7 @@ export default function modifyDcaOrder(
   newFirstPurchase?: number,
 ) {
   const msgs: MsgExecuteContract[] = []
+  const orderId = originalOrder.id
 
   newInitialAsset = newInitialAsset ?? originalOrder.initial_asset
   newTargetAsset = newTargetAsset ?? originalOrder.target_asset
@@ -59,7 +59,7 @@ export default function modifyDcaOrder(
       process.env.ASTROPORT_DCA as string,
       {
         modify_dca_order: {
-          id: id,
+          id: orderId,
           new_initial_asset: newInitialAsset,
           new_target_asset: newTargetAsset,
           new_interval: newInterval,
@@ -132,7 +132,7 @@ export default function modifyDcaOrder(
       process.env.ASTROPORT_DCA as string,
       {
         modify_dca_order: {
-          id: id,
+          id: orderId,
           new_initial_asset: newInitialAsset,
           new_target_asset: newTargetAsset,
           new_interval: newInterval,

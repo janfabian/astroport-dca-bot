@@ -11,6 +11,7 @@ import addBotTipCommand from './commands/add-bot-tip.js'
 import updateUserConfigCommand from './commands/update-user-config.js'
 import withdrawCommand from './commands/withdraw.js'
 import cancelDcaOrderCommand from './commands/cancel-dca-order.js'
+import modifyDcaOrderCommand from './commands/modify-dca-order.js'
 
 const program = new Command()
 
@@ -26,6 +27,7 @@ createDcaOrderCommand(program)
 getConfigCommand(program)
 getUserConfigCommand(program)
 getDcaOrdersCommand(program)
+modifyDcaOrderCommand(program)
 updateUserConfigCommand(program)
 watchCommand(program)
 withdrawCommand(program)
