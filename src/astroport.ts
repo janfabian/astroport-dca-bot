@@ -19,9 +19,13 @@ export async function* paginated(query, resultKey: string) {
 
   while (hasNextPage) {
     const result = await query(startAfter)
-    const items = result[resultKey]
+    const items = result?.[resultKey]
 
     yield items
+
+    if (!items) {
+      break
+    }
 
     startAfter = items[items.length - 1]?.asset_infos
     hasNextPage = Boolean(startAfter)
