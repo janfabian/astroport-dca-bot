@@ -12,8 +12,15 @@ export async function addAddress(address, options) {
 
   address = address ?? wallet.key.accAddress
 
-  const result = await getDcaOrders(address)
-
+  let result
+  try {
+    result = await getDcaOrders(address)
+  } catch (e) {
+    console.error(
+      'No order found for this address, try to create a new order with command `create-order`',
+    )
+    return
+  }
   let orderIds = result.map((dca) => dca.order.id)
 
   if (options.orderIds) {
