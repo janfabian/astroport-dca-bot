@@ -178,6 +178,7 @@ export async function watch(options) {
 export default function watchCommand(program: Command) {
   program
     .command('watch')
+    .alias('start')
     .description('Watch orders and perform dca purchases')
     .option<number>(
       '-i, --interval <numbers>',

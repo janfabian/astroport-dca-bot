@@ -12,6 +12,7 @@
     "test": "NODE_OPTIONS=--openssl-legacy-provider jest",
     "prepublish": "npm run build"
   },
+  "bin": "./dist/index.js",
   "author": "jan fabian",
   "license": "ISC",
   "type": "module",
