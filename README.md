@@ -6,12 +6,13 @@ Prerequisites
 
 - node v18 
 
-```
-npm i
-npm run build
+1. `npm i`
+2. `npm run build`
+3. `cp .env.example .env`
+4. 
+    **Provide MNEMONIC environment variable** in the .env file. 
 
-cp .env.example .env
-```
+    The address of this mnemonic will pay fees for gas if used for dca purchases. This account is also used for all commands modifying DCA contract state.
 
 Examples
 ---
