@@ -1,6 +1,8 @@
 ASTROPORT-DCA-BOT
 ===
 
+[![asciicast](https://asciinema.org/a/520769.svg)](https://asciinema.org/a/520769)
+
 Prerequisites
 ---
 
