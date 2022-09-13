@@ -5,8 +5,8 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc --build",
-    "start": "NODE_OPTIONS=--openssl-legacy-provider node ./dist",
+    "build": "rm -rf dist && tsc --build && chmod +x ./dist/index.js",
+    "bot": "NODE_OPTIONS=--openssl-legacy-provider NODE_NO_WARNINGS=1  node ./dist",
     "serve": "NODE_OPTIONS=--openssl-legacy-provider NODE_NO_WARNINGS=1 ts-node src/index.ts",
     "lint": "tsc --noEmit && eslint \"**/*.ts\" --quiet --fix",
     "test": "NODE_OPTIONS=--openssl-legacy-provider jest",
