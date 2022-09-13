@@ -25,7 +25,7 @@ export async function getLCDClient() {
 
   const lcd = new LCDClient({
     URL: process.env.LCD_ENDPOINT as string, // Use "https://phoenix-lcd.terra.dev" for prod "http://localhost:1317" for localterra.
-    chainID: 'pisco-1', // Use "phoenix-1" for production or "localterra".
+    chainID: process.env.CHAIN_ID as string, // Use "phoenix-1" for production or "localterra".
     gasPrices: gasPricesCoins,
     gasAdjustment: '1.5',
   })

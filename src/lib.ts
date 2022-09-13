@@ -63,10 +63,11 @@ export function fromMapToAssetList(
 
 export function feeRedeem(
   whitelistedFees: DenomAmountMap,
-  tipBalance: DenomAmountMap,
+  tipBalanceOriginal: DenomAmountMap,
   hops: number,
   preferedFeeDenom: string[] = [],
 ): DenomAmountMap[] | null {
+  const tipBalance = { ...tipBalanceOriginal }
   const whitelistedDenoms = Object.keys(whitelistedFees)
   const tipBalanceDenoms = Object.keys(tipBalance)
 
@@ -156,12 +157,20 @@ export function* findPaths(
 
   const paths: string[][] = [[]]
   const toVisit = [from]
+  const edges_names: string[][] = [[]]
 
   while (toVisit.length > 0 && paths.length > 0) {
     const node = toVisit.shift() as string
+    let edges_name = edges_names.shift() as string[]
     let path = paths.shift() as string[]
+    const previous = path[path.length - 1]
+    const edge = previous ? previous + '_' + node : null
 
     path = [...path, node]
+
+    if (edge) {
+      edges_name = [...edges_name, edge]
+    }
 
     if (node === to) {
       yield path
@@ -178,10 +187,15 @@ export function* findPaths(
     const neighbours = graph.get(node) || new Set()
 
     for (const neighbour of neighbours) {
-      if (path.includes(neighbour)) {
+      if (node === neighbour) {
         continue
       }
 
+      if (edges_name.includes(node + '_' + neighbour)) {
+        continue
+      }
+
+      edges_names.push(edges_name)
       toVisit.push(neighbour)
       paths.push(path)
     }

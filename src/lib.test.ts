@@ -284,7 +284,7 @@ describe('createGraph', () => {
   })
 })
 
-describe('findPaths', () => {
+describe.only('findPaths', () => {
   it('returns empty path if start', () => {
     const graph: Graph = new Map()
     const from = 'A'
@@ -401,13 +401,13 @@ describe('findPaths', () => {
   it('multiples routes with circle', () => {
     const graph: Graph = new Map([
       ['A', new Set(['B', 'D', 'A'])],
-      ['B', new Set(['C', 'D', 'B'])],
+      ['B', new Set(['C', 'D', 'B', 'A'])],
       ['C', new Set(['D'])],
       ['D', new Set(['A', 'D'])],
     ])
     const from = 'A'
     const to = 'D'
-    const maxHops = 32
+    const maxHops = 10
     const whitelisted = new Set<string>(['B', 'C'])
 
     const result = [...findPaths(graph, from, to, maxHops, whitelisted)]
@@ -438,6 +438,30 @@ describe('findPaths', () => {
       expect.arrayContaining([
         ['A', 'D'],
         ['A', 'B', 'D'],
+      ]),
+    )
+  })
+
+  it('multiples routes with dead ends', () => {
+    const graph: Graph = new Map([
+      ['A', new Set(['B', 'C', 'E'])],
+      ['B', new Set(['A'])],
+      ['C', new Set(['A'])],
+    ])
+    const from = 'A'
+    const to = 'E'
+    const maxHops = 32
+    const whitelisted = new Set<string>(['A', 'B', 'C'])
+
+    const result = [...findPaths(graph, from, to, maxHops, whitelisted)]
+
+    expect(result).toEqual(
+      expect.arrayContaining([
+        ['A', 'E'],
+        ['A', 'B', 'A', 'E'],
+        ['A', 'C', 'A', 'E'],
+        ['A', 'B', 'A', 'C', 'A', 'E'],
+        ['A', 'C', 'A', 'B', 'A', 'E'],
       ]),
     )
   })

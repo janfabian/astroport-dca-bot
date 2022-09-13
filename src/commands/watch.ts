@@ -134,19 +134,28 @@ export async function watch(options) {
           }
         }
 
+        if (options.simulate) {
+          console.log(
+            `[Address: ${address.address}, orderId: ${order.order.id}]: dca purchase result:`,
+            inspect(bestOffer, false, null),
+          )
+        }
+
         if (bestOffer.swapOps && bestOffer.feeRedeem) {
           try {
-            const result = await performDcaPurchase(
-              order.order.id,
-              address.address,
-              bestOffer.swapOps,
-              bestOffer.feeRedeem,
-            )
+            if (!options.simulate) {
+              const result = await performDcaPurchase(
+                order.order.id,
+                address.address,
+                bestOffer.swapOps,
+                bestOffer.feeRedeem,
+              )
 
-            console.log(
-              `[Address: ${address.address}, orderId: ${order.order.id}]: dca purchase result:`,
-              result,
-            )
+              console.log(
+                `[Address: ${address.address}, orderId: ${order.order.id}]: dca purchase result:`,
+                result,
+              )
+            }
           } catch (e) {
             console.error(
               `[Address: ${address.address}, orderId: ${order.order.id}]: dca purchase error:`,
@@ -175,6 +184,10 @@ export default function watchCommand(program: Command) {
       'interval between each check in ms',
       myParseInt,
       5000,
+    )
+    .option(
+      '-s, --simulate',
+      'perform only simulation without actual DCA purchase',
     )
     .action(tryCatch(watch))
 }
