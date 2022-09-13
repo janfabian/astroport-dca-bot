@@ -72,7 +72,16 @@ export async function watch(options) {
 
       orders = orders
         .filter((o) => address.orderIds?.includes(o.order.id))
-        .filter((o) => o.order.last_purchase <= Date.now() / 1000)
+        .filter(
+          (o) =>
+            o.order.last_purchase + o.order.interval <
+            Math.ceil(Date.now() / 1000),
+        )
+
+      console.log(
+        `[Address: ${address.address}:`,
+        `Number of purchasable orders ${orders.length}`,
+      )
 
       for (const order of orders) {
         const initialDenom = getDenom(order.order.initial_asset.info)
@@ -84,13 +93,22 @@ export async function watch(options) {
           feeRedeem?: Asset[]
         } = { amount: 0n }
 
-        for (const path of findPaths(
-          graph,
-          initialDenom,
-          targetDenom,
-          maxHops,
-          whiteListedDenoms,
-        )) {
+        const paths = [
+          ...findPaths(
+            graph,
+            initialDenom,
+            targetDenom,
+            maxHops,
+            whiteListedDenoms,
+          ),
+        ]
+
+        console.log(
+          `[Address: ${address.address}, orderId: ${order.order.id}]:`,
+          `Simulating ${paths.length} possible routes from ${initialDenom} to ${targetDenom}`,
+        )
+
+        for (const path of paths) {
           try {
             const numOfHops = path.length - 1
             const fees = feeRedeem(whitelistedFees, tipBalance, numOfHops)
@@ -152,8 +170,8 @@ export async function watch(options) {
               )
 
               console.log(
-                `[Address: ${address.address}, orderId: ${order.order.id}]: dca purchase result:`,
-                result,
+                `[Address: ${address.address}, orderId: ${order.order.id}]: dca purchase tx:`,
+                result.txhash,
               )
             }
           } catch (e) {
