@@ -1,4 +1,4 @@
-import { createAssetInfo } from './lib.js'
+import { createAssetInfo, swapOpsFromPath } from './lib.js'
 import { getLCDClient } from './terra.js'
 import { Pair, SimulateSwapQuery, SwapOperation } from './types/astroport.js'
 
@@ -54,28 +54,6 @@ export async function getPairs(): Promise<Pair[]> {
   }
 
   return pairs
-}
-
-export function swapOpsFromPath(
-  path: string[],
-  nativeTokens: Set<string>,
-): SwapOperation[] {
-  const ops = path
-    .map((_node, ix) => path.slice(ix, ix + 2))
-    .slice(0, -1)
-    .map((hop) => {
-      const offer = hop[0]
-      const ask = hop[1]
-
-      return {
-        astro_swap: {
-          offer_asset_info: createAssetInfo(offer, nativeTokens),
-          ask_asset_info: createAssetInfo(ask, nativeTokens),
-        },
-      }
-    })
-
-  return ops
 }
 
 export async function simulateSwap(

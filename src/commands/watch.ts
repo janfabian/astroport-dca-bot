@@ -8,11 +8,12 @@ import {
   tryCatch,
   feeRedeem,
   fromMapToAssetList,
+  swapOpsFromPath,
 } from '../lib.js'
 import { myParseInt } from './lib.js'
 import { list } from '../db.js'
 import { getDcaOrders } from './get-dca-orders.js'
-import { getPairs, simulateSwap, swapOpsFromPath } from '../astroport.js'
+import { getPairs, simulateSwap } from '../astroport.js'
 import { getConfig } from './get-config.js'
 import { getUserConfig } from './get-user-config.js'
 import { inspect } from 'util'
@@ -47,147 +48,151 @@ export async function performDcaPurchase(
   return executeTxResult
 }
 
-export async function watch(options) {
-  ;(async function iterate() {
-    const pairs = await getPairs()
-    const graph = createGraph(pairs)
-    const nativeTokens = getNativeTokens(pairs)
+export async function watchIteration(options) {
+  const pairs = await getPairs()
+  const graph = createGraph(pairs)
+  const nativeTokens = getNativeTokens(pairs)
 
-    const config = await getConfig()
+  const config = await getConfig()
 
-    const adresses = list()
-    if (adresses.length === 0) {
-      console.warn('Watching addresses empty.')
-    }
+  const adresses = list()
+  if (adresses.length === 0) {
+    console.warn('Watching addresses empty.')
+  }
 
-    for (const address of adresses) {
-      const userConfig = await getUserConfig(address.address)
-      const maxHops = userConfig.max_hops ?? config.max_hops
+  for (const address of adresses) {
+    const whitelistedFees = fromAssetListToMap(config.whitelisted_fee_assets)
+    const whiteListedDenoms = new Set(Object.keys(whitelistedFees))
 
-      const whitelistedFees = fromAssetListToMap(config.whitelisted_fee_assets)
-      const whiteListedDenoms = new Set(Object.keys(whitelistedFees))
-      const tipBalance = fromAssetListToMap(userConfig.tip_balance)
+    let orders = await getDcaOrders(address.address)
 
-      let orders = await getDcaOrders(address.address)
-
-      orders = orders
-        .filter((o) => address.orderIds?.includes(o.order.id))
-        .filter(
-          (o) =>
-            o.order.last_purchase + o.order.interval <
-            Math.ceil(Date.now() / 1000),
-        )
-
-      console.log(
-        `[Address: ${address.address}:`,
-        `Number of purchasable orders ${orders.length}`,
+    orders = orders
+      .filter((o) => address.orderIds?.includes(o.order.id))
+      .filter(
+        (o) =>
+          o.order.last_purchase + o.order.interval <
+          Math.ceil(Date.now() / 1000),
       )
 
-      for (const order of orders) {
-        const initialDenom = getDenom(order.order.initial_asset.info)
-        const targetDenom = getDenom(order.order.target_asset)
+    console.log(
+      `[Address: ${address.address}:`,
+      `Number of purchasable orders ${orders.length}`,
+    )
 
-        let bestOffer: {
-          amount: bigint
-          swapOps?: SwapOperation[]
-          feeRedeem?: Asset[]
-        } = { amount: 0n }
+    for (const order of orders) {
+      const userConfig = await getUserConfig(address.address)
+      const maxHops = userConfig.max_hops ?? config.max_hops
+      const tipBalance = fromAssetListToMap(userConfig.tip_balance)
 
-        const paths = [
-          ...findPaths(
-            graph,
-            initialDenom,
-            targetDenom,
-            maxHops,
-            whiteListedDenoms,
-          ),
-        ]
+      const initialDenom = getDenom(order.order.initial_asset.info)
+      const targetDenom = getDenom(order.order.target_asset)
 
-        console.log(
-          `[Address: ${address.address}, orderId: ${order.order.id}]:`,
-          `Simulating ${paths.length} possible routes from ${initialDenom} to ${targetDenom}`,
-        )
+      let bestOffer: {
+        amount: bigint
+        swapOps?: SwapOperation[]
+        feeRedeem?: Asset[]
+      } = { amount: 0n }
 
-        for (const path of paths) {
-          try {
-            const numOfHops = path.length - 1
-            const fees = feeRedeem(whitelistedFees, tipBalance, numOfHops)
+      const paths = [
+        ...findPaths(
+          graph,
+          initialDenom,
+          targetDenom,
+          maxHops,
+          whiteListedDenoms,
+        ),
+      ]
 
-            if (fees == null) {
-              console.warn(
-                `[Address: ${address.address}, orderId: ${order.order.id}, hops: ${numOfHops}]:`,
-                'Not enough fee funds, current tip balances:',
-                inspect(tipBalance, false, null),
-                'Required bot fees:',
-                inspect(whitelistedFees, false, null),
-              )
+      console.log(
+        `[Address: ${address.address}, orderId: ${order.order.id}]:`,
+        `Simulating ${paths.length} possible routes from ${initialDenom} to ${targetDenom}`,
+      )
 
-              continue
-            }
+      for (const path of paths) {
+        try {
+          const numOfHops = path.length - 1
+          const fees = feeRedeem(whitelistedFees, tipBalance, numOfHops)
 
-            const result = await simulateSwap(
-              order.order.dca_amount,
-              path,
-              nativeTokens,
+          if (fees == null) {
+            console.warn(
+              `[Address: ${address.address}, orderId: ${order.order.id}, hops: ${numOfHops}]:`,
+              'Not enough fee funds, current tip balances:',
+              inspect(tipBalance, false, null),
+              'Required bot fees:',
+              inspect(whitelistedFees, false, null),
             )
 
-            if (result.amount) {
-              const amountBigInt = BigInt(result.amount)
-              if (amountBigInt > bestOffer.amount) {
-                bestOffer = {
-                  amount: amountBigInt,
-                  swapOps: swapOpsFromPath(path, nativeTokens),
-                  feeRedeem: fees
-                    .map((f) => fromMapToAssetList(f, nativeTokens))
-                    .flat(),
-                }
+            continue
+          }
+
+          const result = await simulateSwap(
+            order.order.dca_amount,
+            path,
+            nativeTokens,
+          )
+
+          if (result.amount) {
+            const amountBigInt = BigInt(result.amount)
+            if (amountBigInt > bestOffer.amount) {
+              bestOffer = {
+                amount: amountBigInt,
+                swapOps: swapOpsFromPath(path, nativeTokens),
+                feeRedeem: fees
+                  .map((f) => fromMapToAssetList(f, nativeTokens))
+                  .flat(),
               }
             }
-          } catch (e) {
-            console.error(
-              `[Address: ${address.address}, orderId: ${order.order.id}]:`,
-              'ERROR with path',
-              path,
-            )
           }
-        }
-
-        if (options.simulate) {
-          console.log(
-            `[Address: ${address.address}, orderId: ${order.order.id}]: dca purchase result:`,
-            inspect(bestOffer, false, null),
-          )
-        }
-
-        if (bestOffer.swapOps && bestOffer.feeRedeem) {
-          try {
-            if (!options.simulate) {
-              const result = await performDcaPurchase(
-                order.order.id,
-                address.address,
-                bestOffer.swapOps,
-                bestOffer.feeRedeem,
-              )
-
-              console.log(
-                `[Address: ${address.address}, orderId: ${order.order.id}]: dca purchase tx:`,
-                result.txhash,
-              )
-            }
-          } catch (e) {
-            console.error(
-              `[Address: ${address.address}, orderId: ${order.order.id}]: dca purchase error:`,
-              e,
-            )
-          }
-        } else {
-          console.warn(
+        } catch (e) {
+          console.error(
             `[Address: ${address.address}, orderId: ${order.order.id}]:`,
-            'no path is suitable',
+            'ERROR with path',
+            path,
           )
         }
       }
+
+      if (options.simulate) {
+        console.log(
+          `[Address: ${address.address}, orderId: ${order.order.id}]: dca purchase result:`,
+          inspect(bestOffer, false, null),
+        )
+      }
+
+      if (bestOffer.swapOps && bestOffer.feeRedeem) {
+        try {
+          if (!options.simulate) {
+            const result = await performDcaPurchase(
+              order.order.id,
+              address.address,
+              bestOffer.swapOps,
+              bestOffer.feeRedeem,
+            )
+
+            console.log(
+              `[Address: ${address.address}, orderId: ${order.order.id}]: dca purchase tx:`,
+              result.txhash,
+            )
+          }
+        } catch (e) {
+          console.error(
+            `[Address: ${address.address}, orderId: ${order.order.id}]: dca purchase error:`,
+            e,
+          )
+        }
+      } else {
+        console.warn(
+          `[Address: ${address.address}, orderId: ${order.order.id}]:`,
+          'no path is suitable',
+        )
+      }
     }
+  }
+}
+
+export async function watch(options) {
+  ;(async function iterate() {
+    await watchIteration(options)
 
     setTimeout(iterate, options.interval)
   })()

@@ -11,7 +11,7 @@ jest.mock('../executes/withdraw.js')
 
 const mockedTerra = jest.mocked(terra, true)
 const mockedAstroport = jest.mocked(astroport, true)
-const withdrawExecutedraw = jest.mocked(withdrawExecute, true)
+const mockedWithdrawExecute = jest.mocked(withdrawExecute, true)
 
 describe('withdraw', () => {
   it('withdraws amounts', async () => {
@@ -41,8 +41,8 @@ describe('withdraw', () => {
     await withdraw({ assets: ['1000', 'uluna'] })
 
     expect(mockedTerra.getKey).toBeCalledTimes(1)
-    expect(withdrawExecutedraw.default).toBeCalledTimes(1)
-    expect(withdrawExecutedraw.default).toBeCalledWith(expect.any(Object), [
+    expect(mockedWithdrawExecute.default).toBeCalledTimes(1)
+    expect(mockedWithdrawExecute.default).toBeCalledWith(expect.any(Object), [
       {
         amount: '1000',
         info: {
@@ -83,8 +83,8 @@ describe('withdraw', () => {
     })
 
     expect(mockedTerra.getKey).toBeCalledTimes(1)
-    expect(withdrawExecutedraw.default).toBeCalledTimes(1)
-    expect(withdrawExecutedraw.default).toBeCalledWith(expect.any(Object), [
+    expect(mockedWithdrawExecute.default).toBeCalledTimes(1)
+    expect(mockedWithdrawExecute.default).toBeCalledWith(expect.any(Object), [
       {
         amount: '1000',
         info: {
