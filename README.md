@@ -36,13 +36,19 @@ npm run bot -- create-order -i 1000 uluna -t ibc/B3504E092456BA618CC28AC671A71FB
 ```
 
 ```
+# adds address where orders are already created before
+
+npm run bot -- add-address terra1zefg0es5vn8cee4px0xkmpa3l57raqj25vcfjx
+```
+
+```
 # adds 1000 uluna for bot tip fees
 
 npm run bot -- add-bot-tip -a 10000 uluna
 ```
 
 ```
-# starts bot
+# starts bot watching for addresses added via `add-address` or `create-dca-order` command
 
 npm run bot -- start
 ```
