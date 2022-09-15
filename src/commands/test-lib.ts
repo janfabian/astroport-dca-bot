@@ -11,7 +11,9 @@ export function getMockedLCDClient(opts = {}) {
     createAndSignTx: jest.fn(),
   })
 
-  client.tx.broadcast = jest.fn()
+  client.tx.broadcast = jest.fn().mockResolvedValue({
+    txhash: 'test_txhash',
+  })
 
   return client
 }

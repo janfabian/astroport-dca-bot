@@ -1,6 +1,12 @@
 import { inspect } from 'util'
 import { DEFAULT_WHITELISTED_TOKENS } from './astroport.js'
-import { Asset, AssetInfo, DenomAmountMap, Pair } from './types/astroport.js'
+import {
+  Asset,
+  AssetInfo,
+  DenomAmountMap,
+  Pair,
+  SwapOperation,
+} from './types/astroport.js'
 
 export type Graph = Map<string, Set<string>>
 export type Path = string[]
@@ -200,6 +206,28 @@ export function* findPaths(
       paths.push(path)
     }
   }
+}
+
+export function swapOpsFromPath(
+  path: string[],
+  nativeTokens: Set<string>,
+): SwapOperation[] {
+  const ops = path
+    .map((_node, ix) => path.slice(ix, ix + 2))
+    .slice(0, -1)
+    .map((hop) => {
+      const offer = hop[0]
+      const ask = hop[1]
+
+      return {
+        astro_swap: {
+          offer_asset_info: createAssetInfo(offer, nativeTokens),
+          ask_asset_info: createAssetInfo(ask, nativeTokens),
+        },
+      }
+    })
+
+  return ops
 }
 
 export function tryCatch(fn) {
