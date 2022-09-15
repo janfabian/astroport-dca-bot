@@ -62,7 +62,7 @@ export async function watchIteration(options) {
 
   for (const address of adresses) {
     const whitelistedFees = fromAssetListToMap(config.whitelisted_fee_assets)
-    const whiteListedDenoms = new Set(Object.keys(whitelistedFees))
+    const whiteListedDenoms = new Set(config.whitelisted_tokens.map(getDenom))
 
     let orders = await getDcaOrders(address.address)
 
