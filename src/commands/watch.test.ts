@@ -8,7 +8,6 @@ import * as db from '../db.js'
 import * as performDcaPurchaseExecute from '../executes/perform-dca-purchase.js'
 
 import { watchIteration } from './watch.js'
-import { inspect } from 'util'
 
 jest.mock('../terra.js')
 jest.mock('../astroport.js')
@@ -142,6 +141,155 @@ describe('watch', () => {
           },
         },
       ],
+      [{ info: { native_token: { denom: 'uluna' } }, amount: '10' }],
+    )
+  })
+
+  it('filters out orders which are not purchasable', async () => {
+    const client = getMockedLCDClient()
+
+    mockedTerra.getLCDClient.mockResolvedValue(client)
+    mockedAstroport.getPairs.mockResolvedValue([
+      {
+        asset_infos: [
+          {
+            native_token: {
+              denom: 'uluna',
+            },
+          },
+          {
+            token: {
+              contract_addr: 'token_contract_addr',
+            },
+          },
+        ],
+        contract_addr: 'contract_addr',
+        liquidity_token: 'liquidity_token',
+        pair_type: {},
+      },
+    ])
+    mockedGetConfig.getConfig.mockResolvedValue({
+      max_hops: 10,
+      max_spread: '0.05',
+      whitelisted_fee_assets: [
+        {
+          amount: '10',
+          info: {
+            native_token: {
+              denom: 'uluna',
+            },
+          },
+        },
+      ],
+      whitelisted_tokens: [
+        {
+          token: {
+            contract_addr: 'token_contract_addr_2',
+          },
+        },
+      ],
+      factory_addr: 'factory_addr',
+      router_addr: 'router_addr',
+    })
+    mockedDb.list.mockReturnValue([
+      {
+        address: 'user_address',
+        orderIds: [1, 2],
+      },
+    ])
+    mockedGetUserConfig.getUserConfig.mockResolvedValue({
+      last_id: 2,
+      tip_balance: [
+        {
+          amount: '1000',
+          info: {
+            native_token: {
+              denom: 'uluna',
+            },
+          },
+        },
+      ],
+    })
+    mockedGetDcaOrders.getDcaOrders.mockResolvedValue([
+      {
+        token_allowance: '1000',
+        order: {
+          id: 1,
+          dca_amount: '100',
+          initial_asset: {
+            amount: '1000',
+            info: {
+              native_token: {
+                denom: 'uluna',
+              },
+            },
+          },
+          interval: 1,
+          last_purchase: 0,
+          target_asset: {
+            token: {
+              contract_addr: 'token_contract_addr',
+            },
+          },
+        },
+      },
+      {
+        token_allowance: '2000',
+        order: {
+          id: 2,
+          dca_amount: '200',
+          initial_asset: {
+            amount: '2000',
+            info: {
+              native_token: {
+                denom: 'uluna',
+              },
+            },
+          },
+          interval: 100,
+          last_purchase: Date.now() / 1000,
+          target_asset: {
+            token: {
+              contract_addr: 'token_contract_addr',
+            },
+          },
+        },
+      },
+    ])
+    mockedAstroport.simulateSwap.mockImplementation(async (_amount, path) => {
+      return {
+        amount: path.length + '',
+      }
+    })
+
+    await watchIteration({})
+
+    expect(mockedGetConfig.getConfig).toBeCalledTimes(1)
+    expect(mockedGetUserConfig.getUserConfig).toBeCalledTimes(1)
+    expect(mockedGetUserConfig.getUserConfig).toBeCalledWith('user_address')
+    expect(mockedGetDcaOrders.getDcaOrders).toBeCalledTimes(1)
+    expect(mockedGetDcaOrders.getDcaOrders).toBeCalledWith('user_address')
+    expect(mockedAstroport.simulateSwap).toBeCalledTimes(1)
+    expect(mockedAstroport.simulateSwap).toBeCalledWith(
+      '100',
+      ['uluna', 'token_contract_addr'],
+      new Set(['uluna']),
+    )
+    expect(mockedPerformDcaPurchaseExecute.default).toBeCalledWith(
+      expect.any(Object),
+      1,
+      'user_address',
+      [
+        {
+          astro_swap: {
+            offer_asset_info: { native_token: { denom: 'uluna' } },
+            ask_asset_info: {
+              token: { contract_addr: 'token_contract_addr' },
+            },
+          },
+        },
+      ],
+
       [{ info: { native_token: { denom: 'uluna' } }, amount: '10' }],
     )
   })
@@ -298,13 +446,6 @@ describe('watch', () => {
       ['uluna', 'token_contract_addr_2', 'uluna', 'token_contract_addr'],
       new Set(['uluna']),
     )
-    console.log(
-      inspect(
-        mockedPerformDcaPurchaseExecute.default.mock.calls[0],
-        false,
-        null,
-      ),
-    )
     expect(mockedPerformDcaPurchaseExecute.default).toBeCalledWith(
       expect.any(Object),
       1,
@@ -425,6 +566,159 @@ describe('watch', () => {
     expect(mockedGetDcaOrders.getDcaOrders).toBeCalledTimes(1)
     expect(mockedGetDcaOrders.getDcaOrders).toBeCalledWith('user_address')
     expect(mockedAstroport.simulateSwap).toBeCalledTimes(0)
+    expect(mockedPerformDcaPurchaseExecute.default).toBeCalledTimes(0)
+  })
+
+  it('doesnt perform swap if empty addresses', async () => {
+    const client = getMockedLCDClient()
+
+    mockedTerra.getLCDClient.mockResolvedValue(client)
+    mockedAstroport.getPairs.mockResolvedValue([
+      {
+        asset_infos: [
+          {
+            native_token: {
+              denom: 'uluna',
+            },
+          },
+          {
+            token: {
+              contract_addr: 'token_contract_addr',
+            },
+          },
+        ],
+        contract_addr: 'contract_addr',
+        liquidity_token: 'liquidity_token',
+        pair_type: {},
+      },
+    ])
+    mockedGetConfig.getConfig.mockResolvedValue({
+      max_hops: 10,
+      max_spread: '0.05',
+      whitelisted_fee_assets: [
+        {
+          amount: '10',
+          info: {
+            native_token: {
+              denom: 'uluna',
+            },
+          },
+        },
+      ],
+      whitelisted_tokens: [],
+      factory_addr: 'factory_addr',
+      router_addr: 'router_addr',
+    })
+    mockedDb.list.mockReturnValue([])
+    await watchIteration({})
+
+    expect(mockedGetConfig.getConfig).toBeCalledTimes(1)
+    expect(mockedGetUserConfig.getUserConfig).toBeCalledTimes(0)
+    expect(mockedGetDcaOrders.getDcaOrders).toBeCalledTimes(0)
+    expect(mockedAstroport.simulateSwap).toBeCalledTimes(0)
+    expect(mockedPerformDcaPurchaseExecute.default).toBeCalledTimes(0)
+  })
+
+  it('doesnt dca purchase if simulate options', async () => {
+    const client = getMockedLCDClient()
+
+    mockedTerra.getLCDClient.mockResolvedValue(client)
+    mockedAstroport.getPairs.mockResolvedValue([
+      {
+        asset_infos: [
+          {
+            native_token: {
+              denom: 'uluna',
+            },
+          },
+          {
+            token: {
+              contract_addr: 'token_contract_addr',
+            },
+          },
+        ],
+        contract_addr: 'contract_addr',
+        liquidity_token: 'liquidity_token',
+        pair_type: {},
+      },
+    ])
+    mockedGetConfig.getConfig.mockResolvedValue({
+      max_hops: 10,
+      max_spread: '0.05',
+      whitelisted_fee_assets: [
+        {
+          amount: '10',
+          info: {
+            native_token: {
+              denom: 'uluna',
+            },
+          },
+        },
+      ],
+      whitelisted_tokens: [],
+      factory_addr: 'factory_addr',
+      router_addr: 'router_addr',
+    })
+    mockedDb.list.mockReturnValue([
+      {
+        address: 'user_address',
+        orderIds: [1],
+      },
+    ])
+    mockedGetUserConfig.getUserConfig.mockResolvedValue({
+      last_id: 1,
+      tip_balance: [
+        {
+          amount: '1000',
+          info: {
+            native_token: {
+              denom: 'uluna',
+            },
+          },
+        },
+      ],
+    })
+    mockedGetDcaOrders.getDcaOrders.mockResolvedValue([
+      {
+        token_allowance: '1000',
+        order: {
+          id: 1,
+          dca_amount: '100',
+          initial_asset: {
+            amount: '1000',
+            info: {
+              native_token: {
+                denom: 'uluna',
+              },
+            },
+          },
+          interval: 1,
+          last_purchase: 0,
+          target_asset: {
+            token: {
+              contract_addr: 'token_contract_addr',
+            },
+          },
+        },
+      },
+    ])
+    mockedAstroport.simulateSwap.mockResolvedValue({
+      amount: '1',
+    })
+
+    await watchIteration({ simulate: true })
+
+    expect(mockedGetConfig.getConfig).toBeCalledTimes(1)
+    expect(mockedGetUserConfig.getUserConfig).toBeCalledTimes(1)
+    expect(mockedGetUserConfig.getUserConfig).toBeCalledWith('user_address')
+    expect(mockedGetDcaOrders.getDcaOrders).toBeCalledTimes(1)
+    expect(mockedGetDcaOrders.getDcaOrders).toBeCalledWith('user_address')
+    expect(mockedAstroport.simulateSwap).toBeCalledTimes(1)
+    expect(mockedAstroport.simulateSwap).toBeCalledWith(
+      '100',
+      ['uluna', 'token_contract_addr'],
+      new Set(['uluna']),
+    )
     expect(mockedPerformDcaPurchaseExecute.default).toBeCalledTimes(0)
   })
 })
