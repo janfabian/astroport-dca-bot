@@ -14,7 +14,7 @@ export function parseInitialAsset(initial: string) {
 
   if (!initialAmount || !initialDenom) {
     throw new InvalidOptionArgumentError(
-      `Bad parsing of the initial option value, option value provided ${initial}. Required form "[amount] [denom | contract_address]", examples: 100 uluna, 100 token_contract_addr.`,
+      `Bad parsing of the initial option value, option value provided ${initial}. Required form "[amount] [denom | contract_address]", examples: "100 uluna", "100 token_contract_addr".`,
     )
   }
 

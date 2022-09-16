@@ -49,7 +49,7 @@ export default function createDcaOrderCommand(program: Command) {
     .command('create-order')
     .description('Create an order for the currently used env variable MNEMONIC')
     .requiredOption(
-      '-i, --initial <string...>',
+      '-i, --initial <string>',
       'initial asset info, ex. 100 uluna',
       parseInitialAsset,
     )
