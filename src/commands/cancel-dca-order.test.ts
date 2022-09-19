@@ -10,10 +10,10 @@ jest.mock('../astroport.js')
 jest.mock('../executes/cancel-dca-order.js')
 jest.mock('./add-address.js')
 
-const mockedTerra = jest.mocked(terra, true)
+const mockedTerra = jest.mocked(terra, { shallow: true })
 const mockedCancelDcaOrderExecuteExecute = jest.mocked(
   cancelDcaOrderExecuteExecute,
-  true,
+  { shallow: true },
 )
 
 describe('cancelDcaOrder', () => {
