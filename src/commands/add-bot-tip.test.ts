@@ -9,9 +9,9 @@ jest.mock('../terra.js')
 jest.mock('../astroport.js')
 jest.mock('../executes/add-bot-tip.js')
 
-const mockedTerra = jest.mocked(terra, true)
-const mockedAstroport = jest.mocked(astroport, true)
-const mockedAddBotTipExecute = jest.mocked(addBotTipExecute, true)
+const mockedTerra = jest.mocked(terra, { shallow: true })
+const mockedAstroport = jest.mocked(astroport, { shallow: true })
+const mockedAddBotTipExecute = jest.mocked(addBotTipExecute, { shallow: true })
 
 describe('addBotTip', () => {
   it('adds funds for bot tip fees', async () => {

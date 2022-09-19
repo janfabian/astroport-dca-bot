@@ -9,9 +9,9 @@ jest.mock('../terra.js')
 jest.mock('../astroport.js')
 jest.mock('../executes/withdraw.js')
 
-const mockedTerra = jest.mocked(terra, true)
-const mockedAstroport = jest.mocked(astroport, true)
-const mockedWithdrawExecute = jest.mocked(withdrawExecute, true)
+const mockedTerra = jest.mocked(terra, { shallow: true })
+const mockedAstroport = jest.mocked(astroport, { shallow: true })
+const mockedWithdrawExecute = jest.mocked(withdrawExecute, { shallow: true })
 
 describe('withdraw', () => {
   it('withdraws amounts', async () => {

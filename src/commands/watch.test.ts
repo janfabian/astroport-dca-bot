@@ -17,16 +17,15 @@ jest.mock('./get-dca-orders.js')
 jest.mock('../db.js')
 jest.mock('../executes/perform-dca-purchase.js')
 
-const mockedTerra = jest.mocked(terra, true)
-const mockedAstroport = jest.mocked(astroport, true)
-const mockedGetConfig = jest.mocked(getConfig, true)
-const mockedGetUserConfig = jest.mocked(getUserConfig, true)
-const mockedGetDcaOrders = jest.mocked(getDcaOrders, true)
-const mockedPerformDcaPurchaseExecute = jest.mocked(
-  performDcaPurchaseExecute,
-  true,
-)
-const mockedDb = jest.mocked(db, true)
+const mockedTerra = jest.mocked(terra, { shallow: true })
+const mockedAstroport = jest.mocked(astroport, { shallow: true })
+const mockedGetConfig = jest.mocked(getConfig, { shallow: true })
+const mockedGetUserConfig = jest.mocked(getUserConfig, { shallow: true })
+const mockedGetDcaOrders = jest.mocked(getDcaOrders, { shallow: true })
+const mockedPerformDcaPurchaseExecute = jest.mocked(performDcaPurchaseExecute, {
+  shallow: true,
+})
+const mockedDb = jest.mocked(db, { shallow: true })
 
 describe('watch', () => {
   it('does dca purchase', async () => {

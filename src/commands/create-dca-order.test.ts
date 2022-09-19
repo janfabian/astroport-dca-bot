@@ -11,10 +11,12 @@ jest.mock('../astroport.js')
 jest.mock('../executes/create-dca-order.js')
 jest.mock('./add-address.js')
 
-const mockedTerra = jest.mocked(terra, true)
-const mockedAstroport = jest.mocked(astroport, true)
-const mockedAddAddress = jest.mocked(addAddress, true)
-const mockedCreateDcaOrderExecute = jest.mocked(createDcaOrderExecute, true)
+const mockedTerra = jest.mocked(terra, { shallow: true })
+const mockedAstroport = jest.mocked(astroport, { shallow: true })
+const mockedAddAddress = jest.mocked(addAddress, { shallow: true })
+const mockedCreateDcaOrderExecute = jest.mocked(createDcaOrderExecute, {
+  shallow: true,
+})
 
 describe('createDcaOrder', () => {
   it('creates dca order from native to token', async () => {
