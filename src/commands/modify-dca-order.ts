@@ -30,20 +30,27 @@ export async function modifyDcaOrder(options) {
   const pairs = await getPairs()
   const nativeTokens = getNativeTokens(pairs)
 
-  const initial = options.initial
-  const [initialAmount, initialDenom] = initial || []
+  const initial: string[] = options.initial
+  let initialAmount: string | null = null
+  let initialDenom: string | null = null
+
+  if (initial) {
+    ;[initialAmount, initialDenom] = parseInitialAsset(initial) || []
+  }
 
   const target = options.target
 
   const msgs = modifyDcaOrderExecute(
     wallet,
     originalOrder.order,
-    initial && {
-      info: nativeTokens.has(initialDenom)
-        ? nativeToken(initialDenom)
-        : token(initialDenom),
-      amount: initialAmount,
-    },
+    initialAmount && initialDenom
+      ? {
+          info: nativeTokens.has(initialDenom)
+            ? nativeToken(initialDenom)
+            : token(initialDenom),
+          amount: initialAmount,
+        }
+      : undefined,
     target && (nativeTokens.has(target) ? nativeToken(target) : token(target)),
     options.interval,
     options.dcaAmount,
@@ -67,9 +74,8 @@ export default function modifyDcaOrderCommand(program: Command) {
     .description('Modifies DCA order')
     .requiredOption('-id, --order-id <number>', 'order id', myParseInt)
     .option(
-      '-i, --initial [string]',
+      '-i, --initial [string...]',
       'new initial asset info, ex. 100 uluna',
-      parseInitialAsset,
     )
     .option('-t, --target [string]', 'new target asset denom')
     .option(

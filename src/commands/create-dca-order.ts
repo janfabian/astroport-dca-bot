@@ -8,14 +8,15 @@ import { nativeToken, token } from '../lib.js'
 import { myParseInt, parseInitialAsset } from './lib.js'
 
 export async function createDcaOrder(options) {
+  const initial: string[] = options.initial
+  const [initialAmount, initialDenom] = parseInitialAsset(initial)
+
   const k = getKey()
   const terra = await getLCDClient()
   const wallet = terra.wallet(k)
 
   const pairs = await getPairs()
   const nativeTokens = getNativeTokens(pairs)
-
-  const [initialAmount, initialDenom] = options.initial
 
   const target = options.target
 
@@ -49,9 +50,8 @@ export default function createDcaOrderCommand(program: Command) {
     .command('create-order')
     .description('Create an order for the currently used env variable MNEMONIC')
     .requiredOption(
-      '-i, --initial <string>',
+      '-i, --initial <string...>',
       'initial asset info, ex. 100 uluna',
-      parseInitialAsset,
     )
     .requiredOption('-t, --target <string>', 'target asset denom')
     .requiredOption(

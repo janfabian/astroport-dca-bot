@@ -9,8 +9,18 @@ export function myParseInt(value: string) {
   return parsedValue
 }
 
-export function parseInitialAsset(initial: string) {
-  const [initialAmount, initialDenom] = initial.split(' ')
+export function parseInitialAsset(initial: string[]) {
+  let initialAmount: string, initialDenom: string
+
+  if (initial.length === 1) {
+    ;[initialAmount, initialDenom] = initial[0].split(' ')
+  } else if (initial.length === 2) {
+    ;[initialAmount, initialDenom] = initial
+  } else {
+    throw new InvalidOptionArgumentError(
+      `Wrong number of initial option value, example "-i 1000 uluna"`,
+    )
+  }
 
   if (!initialAmount || !initialDenom) {
     throw new InvalidOptionArgumentError(
