@@ -48,7 +48,7 @@ export type DcaQueryInfo = {
 }
 
 export type SwapOperation = {
-  astro_swap: {
+  [string]: {
     offer_asset_info: AssetInfo
     ask_asset_info: AssetInfo
   }

@@ -211,6 +211,7 @@ export function* findPaths(
 export function swapOpsFromPath(
   path: string[],
   nativeTokens: Set<string>,
+  swapKeyname = 'astro_swap',
 ): SwapOperation[] {
   const ops = path
     .map((_node, ix) => path.slice(ix, ix + 2))
@@ -220,7 +221,7 @@ export function swapOpsFromPath(
       const ask = hop[1]
 
       return {
-        astro_swap: {
+        [swapKeyname]: {
           offer_asset_info: createAssetInfo(offer, nativeTokens),
           ask_asset_info: createAssetInfo(ask, nativeTokens),
         },
