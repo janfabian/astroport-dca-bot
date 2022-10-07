@@ -197,7 +197,7 @@ export function* findPaths(
         continue
       }
 
-      if (edges_name.includes(node + '_' + neighbour)) {
+      if (edges_name.filter((e) => e === node + '_' + neighbour).length >= 1) {
         continue
       }
 
