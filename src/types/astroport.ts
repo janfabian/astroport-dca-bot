@@ -48,7 +48,7 @@ export type DcaQueryInfo = {
 }
 
 export type SwapOperation = {
-  [string]: {
+  [key: string]: {
     offer_asset_info: AssetInfo
     ask_asset_info: AssetInfo
   }
@@ -66,7 +66,7 @@ export type ConfigQuery = {
 export type UserConfigQuery = {
   last_id: number
   max_hops?: number
-  max_spread?: spread
+  max_spread?: string
   tip_balance: Asset[]
 }
 
