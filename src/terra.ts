@@ -1,4 +1,9 @@
-import { Coins, LCDClient, MnemonicKey } from '@terra-money/terra.js'
+import {
+  Coins,
+  LCDClient,
+  LCDClientConfig,
+  MnemonicKey,
+} from '@terra-money/terra.js'
 
 declare let fetch: any
 
@@ -16,7 +21,9 @@ export async function getPricesCoins() {
 
 let lcdSingleton: LCDClient
 
-export async function getLCDClient() {
+export async function getLCDClient(
+  clientOptions: Partial<LCDClientConfig> = {},
+) {
   if (lcdSingleton) {
     return lcdSingleton
   }
@@ -28,6 +35,7 @@ export async function getLCDClient() {
     chainID: process.env.CHAIN_ID as string, // Use "phoenix-1" for production or "localterra".
     gasPrices: gasPricesCoins,
     gasAdjustment: '1.5',
+    ...clientOptions,
   })
 
   lcdSingleton = lcd
