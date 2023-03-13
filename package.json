@@ -17,7 +17,7 @@
   "license": "ISC",
   "type": "module",
   "devDependencies": {
-    "@types/jest": "29.4.0",
+    "@types/jest": "29.4.1",
     "@types/node": "18.15.1",
     "@types/ramda": "0.28.23",
     "@typescript-eslint/eslint-plugin": "5.54.1",
