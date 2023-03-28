@@ -38,7 +38,7 @@
     "trailingComma": "all"
   },
   "dependencies": {
-    "@terra-money/terra.js": "3.1.7",
+    "@terra-money/terra.js": "3.1.8",
     "commander": "9.5.0",
     "dotenv": "16.0.3",
     "ramda": "0.28.0"
