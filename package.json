@@ -40,7 +40,7 @@
   "dependencies": {
     "@terra-money/terra.js": "3.1.9",
     "commander": "9.5.0",
-    "dotenv": "16.2.0",
+    "dotenv": "16.3.0",
     "ramda": "0.29.0"
   }
 }
