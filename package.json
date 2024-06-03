@@ -18,7 +18,7 @@
   "type": "module",
   "devDependencies": {
     "@types/jest": "29.5.12",
-    "@types/node": "18.19.33",
+    "@types/node": "18.19.34",
     "@types/ramda": "0.30.0",
     "@typescript-eslint/eslint-plugin": "7.11.0",
     "@typescript-eslint/parser": "7.11.0",
